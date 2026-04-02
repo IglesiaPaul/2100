@@ -466,7 +466,7 @@
                     <span class="measure-tag">${getCategoryLabel(m.categorie)}</span>
                     <h4>${m.titre}</h4>
                     <p>${m.resume}</p>
-                    <a href="${m.url}" class="measure-link">Voir le détail →</a>
+                    <a href="mesure.html?id=${m.id}" class="measure-link">Voir le détail →</a>
                 </div>
             `).join('');
             stats.innerHTML = `${results.length} résultat(s) trouvé(s) sur ${currentMeasures.length} mesures`;
