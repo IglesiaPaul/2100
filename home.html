@@ -1,0 +1,555 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <title>L'Avenir en commun - Comprendre le programme</title>
+    <meta name="description" content="Découvrez et comprenez facilement les 831 propositions du programme L'Avenir en commun. Recherche par thème, public ou mot-clé.">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif;
+            background: #f5f7fa;
+            color: #1a2a3a;
+            line-height: 1.5;
+        }
+
+        /* Navigation */
+        .navbar {
+            background: white;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .nav-container {
+            max-width: 1280px;
+            margin: 0 auto;
+            padding: 1rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+
+        .logo {
+            font-size: 1.5rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, #1a6d2f, #2b9e4a);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            text-decoration: none;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 1.5rem;
+            flex-wrap: wrap;
+        }
+
+        .nav-links a {
+            text-decoration: none;
+            color: #4a5a6a;
+            font-weight: 500;
+            transition: color 0.2s;
+        }
+
+        .nav-links a:hover {
+            color: #2b9e4a;
+        }
+
+        /* Hero section */
+        .hero {
+            background: linear-gradient(135deg, #1a2a3a 0%, #2a3a4a 100%);
+            color: white;
+            padding: 3rem 2rem;
+            text-align: center;
+        }
+
+        .hero-content {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .hero h1 {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+            line-height: 1.2;
+        }
+
+        .hero p {
+            font-size: 1.2rem;
+            opacity: 0.9;
+            margin-bottom: 2rem;
+        }
+
+        /* Search bar */
+        .search-container {
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        .search-box {
+            display: flex;
+            background: white;
+            border-radius: 60px;
+            overflow: hidden;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+        }
+
+        .search-box input {
+            flex: 1;
+            padding: 1rem 1.5rem;
+            border: none;
+            font-size: 1.1rem;
+            outline: none;
+        }
+
+        .search-box button {
+            background: #2b9e4a;
+            border: none;
+            padding: 0 2rem;
+            color: white;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background 0.2s;
+            font-size: 1rem;
+        }
+
+        .search-box button:hover {
+            background: #1a6d2f;
+        }
+
+        /* Categories section */
+        .categories {
+            max-width: 1280px;
+            margin: 0 auto;
+            padding: 3rem 2rem;
+        }
+
+        .section-title {
+            text-align: center;
+            font-size: 2rem;
+            margin-bottom: 2rem;
+            color: #1a2a3a;
+        }
+
+        .section-subtitle {
+            text-align: center;
+            color: #6a7a8a;
+            margin-bottom: 2rem;
+        }
+
+        .grid-categories {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .category-card {
+            background: white;
+            border-radius: 16px;
+            padding: 1.5rem;
+            text-decoration: none;
+            color: inherit;
+            transition: transform 0.2s, box-shadow 0.2s;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+            border: 1px solid #eef2f6;
+        }
+
+        .category-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 12px 24px rgba(0,0,0,0.1);
+        }
+
+        .category-icon {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .category-card h3 {
+            font-size: 1.3rem;
+            margin-bottom: 0.5rem;
+            color: #1a6d2f;
+        }
+
+        .category-card p {
+            color: #6a7a8a;
+            font-size: 0.9rem;
+        }
+
+        /* Featured measures */
+        .featured {
+            background: white;
+            padding: 3rem 2rem;
+        }
+
+        .featured-container {
+            max-width: 1280px;
+            margin: 0 auto;
+        }
+
+        .measures-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 1.5rem;
+            margin-top: 2rem;
+        }
+
+        .measure-card {
+            background: #f8fafc;
+            border-radius: 12px;
+            padding: 1.5rem;
+            border-left: 4px solid #2b9e4a;
+            transition: background 0.2s;
+        }
+
+        .measure-card:hover {
+            background: #f0f4f8;
+        }
+
+        .measure-tag {
+            display: inline-block;
+            background: #e8f5e9;
+            color: #2b9e4a;
+            font-size: 0.75rem;
+            padding: 0.25rem 0.75rem;
+            border-radius: 20px;
+            margin-bottom: 0.75rem;
+        }
+
+        .measure-card h4 {
+            font-size: 1.1rem;
+            margin-bottom: 0.5rem;
+            color: #1a2a3a;
+        }
+
+        .measure-card p {
+            color: #6a7a8a;
+            font-size: 0.9rem;
+            margin-bottom: 1rem;
+        }
+
+        .measure-link {
+            color: #2b9e4a;
+            text-decoration: none;
+            font-weight: 500;
+            font-size: 0.9rem;
+        }
+
+        .measure-link:hover {
+            text-decoration: underline;
+        }
+
+        /* Footer */
+        .footer {
+            background: #1a2a3a;
+            color: #aab8c5;
+            padding: 2rem;
+            text-align: center;
+            font-size: 0.85rem;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .hero h1 {
+                font-size: 1.8rem;
+            }
+            .nav-container {
+                flex-direction: column;
+            }
+            .categories, .featured {
+                padding: 2rem 1rem;
+            }
+        }
+
+        /* Results area */
+        .results-area {
+            max-width: 1280px;
+            margin: 0 auto;
+            padding: 2rem;
+            display: none;
+        }
+
+        .results-area.show {
+            display: block;
+        }
+
+        .results-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+
+        .close-results {
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            cursor: pointer;
+            color: #6a7a8a;
+        }
+
+        .filter-buttons {
+            display: flex;
+            gap: 0.5rem;
+            flex-wrap: wrap;
+        }
+
+        .filter-btn {
+            background: #eef2f6;
+            border: none;
+            padding: 0.5rem 1rem;
+            border-radius: 30px;
+            cursor: pointer;
+            font-size: 0.85rem;
+            transition: all 0.2s;
+        }
+
+        .filter-btn.active {
+            background: #2b9e4a;
+            color: white;
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar">
+        <div class="nav-container">
+            <a href="#" class="logo">🌱 L'Avenir en commun</a>
+            <div class="nav-links">
+                <a href="#">Accueil</a>
+                <a href="#">Toutes les mesures</a>
+                <a href="#">Par thème</a>
+                <a href="#">Le programme</a>
+                <a href="#">À propos</a>
+            </div>
+        </div>
+    </nav>
+
+    <section class="hero">
+        <div class="hero-content">
+            <h1>Comprendre le programme<br>qui change la France</h1>
+            <p>831 propositions pour l'écologie, le travail, la santé, l'éducation et la démocratie. Accessibles à toutes et tous.</p>
+            <div class="search-container">
+                <div class="search-box">
+                    <input type="text" id="searchInput" placeholder="Rechercher... (ex: retraite, SMIC, logement, écologie)">
+                    <button id="searchBtn">🔍 Rechercher</button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Results section -->
+    <div id="resultsArea" class="results-area">
+        <div class="results-header">
+            <h2>Résultats de recherche</h2>
+            <button class="close-results" id="closeResults">✕</button>
+        </div>
+        <div class="filter-buttons">
+            <button class="filter-btn active" data-filter="all">Tous</button>
+            <button class="filter-btn" data-filter="social">Social & Travail</button>
+            <button class="filter-btn" data-filter="ecologie">Écologie</button>
+            <button class="filter-btn" data-filter="economie">Économie & Fiscalité</button>
+            <button class="filter-btn" data-filter="democratie">Démocratie</button>
+            <button class="filter-btn" data-filter="sante">Santé</button>
+        </div>
+        <div id="resultsList" class="measures-grid"></div>
+    </div>
+
+    <section class="categories">
+        <h2 class="section-title">Explorer par thème</h2>
+        <p class="section-subtitle">Trouvez les mesures qui vous concernent directement</p>
+        <div class="grid-categories">
+            <a href="#" class="category-card">
+                <div class="category-icon">💼</div>
+                <h3>Travail & Salaire</h3>
+                <p>Retraite à 60 ans, SMIC à 1600€, semaine de 4 jours, fin des CDD précaires</p>
+            </a>
+            <a href="#" class="category-card">
+                <div class="category-icon">🌍</div>
+                <h3>Écologie & Climat</h3>
+                <p>100% énergies renouvelables, sortie du nucléaire, rénovation des logements</p>
+            </a>
+            <a href="#" class="category-card">
+                <div class="category-icon">🏥</div>
+                <h3>Santé & Hôpital</h3>
+                <p>100% Sécu, fin des déserts médicaux, légalisation du cannabis</p>
+            </a>
+            <a href="#" class="category-card">
+                <div class="category-icon">📚</div>
+                <h3>Éducation</h3>
+                <p>Fin de Parcoursup, gratuité des études, recrutement de 160 000 profs</p>
+            </a>
+            <a href="#" class="category-card">
+                <div class="category-icon">🏠</div>
+                <h3>Logement</h3>
+                <p>200 000 logements publics/an, encadrement des loyers, zéro sans-abri</p>
+            </a>
+            <a href="#" class="category-card">
+                <div class="category-icon">⚖️</div>
+                <h3>Démocratie & Justice</h3>
+                <p>6e République, RIC, proportionnelle, fin de l'état d'urgence</p>
+            </a>
+            <a href="#" class="category-card">
+                <div class="category-icon">💰</div>
+                <h3>Fiscalité & Impôts</h3>
+                <p>ISF rétabli, 14 tranches d'impôt, héritage maximum à 12M€</p>
+            </a>
+            <a href="#" class="category-card">
+                <div class="category-icon">🚆</div>
+                <h3>Transports</h3>
+                <p>Réouverture des lignes ferroviaires, transports gratuits pour les jeunes</p>
+            </a>
+        </div>
+    </section>
+
+    <section class="featured">
+        <div class="featured-container">
+            <h2 class="section-title">📌 Les mesures phares</h2>
+            <div class="measures-grid" id="featuredMeasures">
+                <!-- Les mesures seront chargées par JavaScript -->
+            </div>
+        </div>
+    </section>
+
+    <footer class="footer">
+        <p>L'Avenir en commun - Programme de l'Union Populaire</p>
+        <p style="margin-top: 0.5rem; font-size: 0.75rem;">Site indépendant de vulgarisation - 831 propositions accessibles à toutes et tous</p>
+    </footer>
+
+    <script>
+        // Base de données des mesures (exemple - à enrichir avec les 831 propositions)
+        const measures = [
+            { id: 1, title: "Retraite à 60 ans", description: "Retour à la retraite à 60 ans avec 40 annuités de cotisation.", category: "social", tags: ["retraite", "seniors", "travail"] },
+            { id: 2, title: "SMIC à 1600€ net", description: "Augmentation immédiate du SMIC à 1600 euros net par mois.", category: "social", tags: ["salaire", "pouvoir d'achat", "travail"] },
+            { id: 3, title: "100% énergies renouvelables", description: "Objectif 100% d'énergies renouvelables en 2050, sortie du nucléaire.", category: "ecologie", tags: ["énergie", "climat", "nucléaire"] },
+            { id: 4, title: "ISF climatique", description: "Rétablissement de l'ISF avec un volet climatique pour taxer les gros pollueurs.", category: "economie", tags: ["impôts", "richesse", "climat"] },
+            { id: 5, title: "6e République", description: "Convocation d'une Assemblée constituante pour une nouvelle Constitution.", category: "democratie", tags: ["constitution", "RIC", "démocratie"] },
+            { id: 6, title: "100% Sécu", description: "Remboursement intégral des soins prescrits par la Sécurité sociale.", category: "sante", tags: ["santé", "remboursement", "mutuelle"] },
+            { id: 7, title: "Fin de Parcoursup", description: "Accès sans sélection à l'université pour tous les bacheliers.", category: "social", tags: ["éducation", "étudiants", "université"] },
+            { id: 8, title: "Encadrement des loyers", description: "Blocage des loyers dans les zones tendues à -20% du loyer médian.", category: "social", tags: ["logement", "loyer", "immobilier"] },
+            { id: 9, title: "Semaine de 4 jours", description: "Passage aux 32 heures pour les métiers pénibles, généralisation négociée.", category: "social", tags: ["travail", "temps de travail", "congés"] },
+            { id: 10, title: "Gratuité des cantines", description: "Cantines scolaires gratuites pour tous les enfants.", category: "social", tags: ["éducation", "enfants", "alimentation"] },
+            { id: 11, title: "Fin des fermes-usines", description: "Interdiction des élevages industriels et sortie de l'élevage intensif.", category: "ecologie", tags: ["agriculture", "animaux", "alimentation"] },
+            { id: 12, title: "Référendum d'initiative citoyenne", description: "Les citoyens peuvent proposer des lois ou révoquer des élus.", category: "democratie", tags: ["RIC", "démocratie", "référendum"] }
+        ];
+
+        // Fonction pour afficher les résultats
+        function displayResults(results) {
+            const container = document.getElementById('resultsList');
+            const area = document.getElementById('resultsArea');
+            
+            if (results.length === 0) {
+                container.innerHTML = '<p style="text-align:center; grid-column:1/-1;">Aucun résultat trouvé. Essayez d\'autres mots-clés.</p>';
+                area.classList.add('show');
+                return;
+            }
+            
+            container.innerHTML = results.map(m => `
+                <div class="measure-card">
+                    <span class="measure-tag">${getCategoryLabel(m.category)}</span>
+                    <h4>${m.title}</h4>
+                    <p>${m.description}</p>
+                    <a href="#" class="measure-link">Voir le détail →</a>
+                </div>
+            `).join('');
+            area.classList.add('show');
+            // Scroll to results
+            area.scrollIntoView({ behavior: 'smooth' });
+        }
+
+        function getCategoryLabel(cat) {
+            const labels = {
+                social: 'Social & Travail',
+                ecologie: '🌿 Écologie',
+                economie: '💰 Économie',
+                democratie: '🗳️ Démocratie',
+                sante: '🏥 Santé'
+            };
+            return labels[cat] || cat;
+        }
+
+        // Recherche
+        function search(query, filter) {
+            let results = measures;
+            
+            // Filtre par catégorie
+            if (filter !== 'all') {
+                results = results.filter(m => m.category === filter);
+            }
+            
+            // Filtre par texte
+            if (query.trim()) {
+                const lowerQuery = query.toLowerCase();
+                results = results.filter(m => 
+                    m.title.toLowerCase().includes(lowerQuery) || 
+                    m.description.toLowerCase().includes(lowerQuery) ||
+                    m.tags.some(tag => tag.includes(lowerQuery))
+                );
+            }
+            
+            return results;
+        }
+
+        // Afficher les mesures phares sur l'accueil
+        function displayFeatured() {
+            const featuredContainer = document.getElementById('featuredMeasures');
+            const featured = measures.slice(0, 6);
+            featuredContainer.innerHTML = featured.map(m => `
+                <div class="measure-card">
+                    <span class="measure-tag">${getCategoryLabel(m.category)}</span>
+                    <h4>${m.title}</h4>
+                    <p>${m.description.substring(0, 100)}${m.description.length > 100 ? '...' : ''}</p>
+                    <a href="#" class="measure-link">Voir le détail →</a>
+                </div>
+            `).join('');
+        }
+
+        // Event listeners
+        document.getElementById('searchBtn').addEventListener('click', () => {
+            const query = document.getElementById('searchInput').value;
+            const activeFilter = document.querySelector('.filter-btn.active').dataset.filter;
+            const results = search(query, activeFilter);
+            displayResults(results);
+        });
+
+        document.getElementById('searchInput').addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+                document.getElementById('searchBtn').click();
+            }
+        });
+
+        document.getElementById('closeResults').addEventListener('click', () => {
+            document.getElementById('resultsArea').classList.remove('show');
+        });
+
+        // Filter buttons
+        document.querySelectorAll('.filter-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+                // Re-run search with new filter
+                const query = document.getElementById('searchInput').value;
+                const filter = btn.dataset.filter;
+                const results = search(query, filter);
+                if (document.getElementById('resultsArea').classList.contains('show')) {
+                    displayResults(results);
+                }
+            });
+        });
+
+        // Initialize
+        displayFeatured();
+    </script>
+</body>
+</html>
