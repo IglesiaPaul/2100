@@ -764,9 +764,7 @@ const mesures = [
     "url": "/2100/mesures/impot-universel-multinationales.html",
     "motscles": ["multinationales", "évasion fiscale", "impôt sur les sociétés", "GAFA", "paradis fiscaux"],
     "statut": "mesure_cle"
-  }
-
-    // === ÉCOLOGIE & CLIMAT (50 mesures - Lot 2) ===
+  },
   {
     "id": 51,
     "titre": "Sortie du nucléaire programmée",
@@ -1467,8 +1465,6 @@ const mesures = [
     "motscles": ["phyto", "pesticides", "parc", "jardin", "zéro phyto"],
     "statut": "mesure"
   },
-
-      // === TRAVAIL & EMPLOI (50 mesures - Lot 3) ===
   {
     "id": 101,
     "titre": "Garantie jeune universelle",
@@ -2029,6 +2025,7 @@ const mesures = [
     "motscles": ["CESU", "particulier employeur", "emploi à domicile", "déclaration", "cotisations"],
     "statut": "mesure"
   }
+    
 ];
 
 // Export pour utilisation
