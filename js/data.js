@@ -1466,7 +1466,7 @@ const mesures = [
     "financement": "Sans coût - réglementation",
     "motscles": ["phyto", "pesticides", "parc", "jardin", "zéro phyto"],
     "statut": "mesure"
-  }
+  },
 
       // === TRAVAIL & EMPLOI (50 mesures - Lot 3) ===
   {
