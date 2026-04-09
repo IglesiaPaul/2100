@@ -1,0 +1,333 @@
+/* style.css - Styles communs pour tout le site */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif;
+    background: #f5f7fa;
+    color: #1a2a3a;
+    line-height: 1.5;
+}
+
+/* Navigation */
+.navbar {
+    background: white;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+    position: sticky;
+    top: 0;
+    z-index: 100;
+}
+
+.nav-container {
+    max-width: 1280px;
+    margin: 0 auto;
+    padding: 1rem 2rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 1rem;
+}
+
+.logo {
+    font-size: 1.5rem;
+    font-weight: 700;
+    background: linear-gradient(135deg, #1a6d2f, #2b9e4a);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    text-decoration: none;
+}
+
+.nav-links {
+    display: flex;
+    gap: 1.5rem;
+    flex-wrap: wrap;
+}
+
+.nav-links a {
+    text-decoration: none;
+    color: #4a5a6a;
+    font-weight: 500;
+    transition: color 0.2s;
+}
+
+.nav-links a:hover {
+    color: #2b9e4a;
+}
+
+/* Hero section - inspirée des PDFs */
+.hero {
+    background: linear-gradient(135deg, #1a2a3a 0%, #2a3a4a 100%);
+    color: white;
+    padding: 3rem 2rem;
+    text-align: center;
+    border-bottom: 4px solid #2b9e4a;
+}
+
+.hero-content {
+    max-width: 800px;
+    margin: 0 auto;
+}
+
+.hero h1 {
+    font-size: 2.5rem;
+    margin-bottom: 1rem;
+    line-height: 1.2;
+}
+
+.hero p {
+    font-size: 1.2rem;
+    opacity: 0.9;
+    margin-bottom: 2rem;
+}
+
+/* Search bar */
+.search-container {
+    max-width: 600px;
+    margin: 0 auto;
+}
+
+.search-box {
+    display: flex;
+    background: white;
+    border-radius: 60px;
+    overflow: hidden;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+}
+
+.search-box input {
+    flex: 1;
+    padding: 1rem 1.5rem;
+    border: none;
+    font-size: 1.1rem;
+    outline: none;
+}
+
+.search-box button {
+    background: #2b9e4a;
+    border: none;
+    padding: 0 2rem;
+    color: white;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.2s;
+    font-size: 1rem;
+}
+
+.search-box button:hover {
+    background: #1a6d2f;
+}
+
+/* Categories section */
+.categories {
+    max-width: 1280px;
+    margin: 0 auto;
+    padding: 3rem 2rem;
+}
+
+.section-title {
+    text-align: center;
+    font-size: 2rem;
+    margin-bottom: 0.5rem;
+    color: #1a2a3a;
+}
+
+.section-subtitle {
+    text-align: center;
+    color: #6a7a8a;
+    margin-bottom: 2rem;
+}
+
+/* Grille de catégories - couleurs inspirées des PDFs */
+.grid-categories {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 1.5rem;
+}
+
+.category-card {
+    background: white;
+    border-radius: 16px;
+    padding: 1.5rem;
+    text-decoration: none;
+    color: inherit;
+    transition: transform 0.2s, box-shadow 0.2s;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+    border-left: 4px solid #2b9e4a;
+}
+
+.category-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 12px 24px rgba(0,0,0,0.1);
+}
+
+.category-icon {
+    font-size: 2.5rem;
+    margin-bottom: 1rem;
+}
+
+.category-card h3 {
+    font-size: 1.3rem;
+    margin-bottom: 0.5rem;
+    color: #1a6d2f;
+}
+
+.category-card p {
+    color: #6a7a8a;
+    font-size: 0.9rem;
+}
+
+/* Featured section */
+.featured {
+    background: white;
+    padding: 3rem 2rem;
+}
+
+.featured-container {
+    max-width: 1280px;
+    margin: 0 auto;
+}
+
+/* Mesures grid */
+.measures-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 1.5rem;
+    margin-top: 2rem;
+}
+
+.measure-card {
+    background: #f8fafc;
+    border-radius: 12px;
+    padding: 1.5rem;
+    border-left: 4px solid #2b9e4a;
+    transition: all 0.2s;
+}
+
+.measure-card:hover {
+    background: #f0f4f8;
+    transform: translateY(-2px);
+}
+
+.measure-tag {
+    display: inline-block;
+    background: #e8f5e9;
+    color: #2b9e4a;
+    font-size: 0.75rem;
+    padding: 0.25rem 0.75rem;
+    border-radius: 20px;
+    margin-bottom: 0.75rem;
+}
+
+.measure-card h4 {
+    font-size: 1.1rem;
+    margin-bottom: 0.5rem;
+    color: #1a2a3a;
+}
+
+.measure-card p {
+    color: #6a7a8a;
+    font-size: 0.9rem;
+    margin-bottom: 1rem;
+}
+
+.measure-link {
+    color: #2b9e4a;
+    text-decoration: none;
+    font-weight: 500;
+    font-size: 0.9rem;
+}
+
+.measure-link:hover {
+    text-decoration: underline;
+}
+
+/* Results area */
+.results-area {
+    max-width: 1280px;
+    margin: 2rem auto;
+    padding: 0 2rem;
+    display: none;
+}
+
+.results-area.show {
+    display: block;
+}
+
+.results-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1.5rem;
+    flex-wrap: wrap;
+    gap: 1rem;
+}
+
+.close-results {
+    background: none;
+    border: none;
+    font-size: 1.5rem;
+    cursor: pointer;
+    color: #6a7a8a;
+}
+
+/* Filter buttons - version améliorée */
+.filter-buttons {
+    display: flex;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+    margin-bottom: 1.5rem;
+}
+
+.filter-btn {
+    background: #eef2f6;
+    border: none;
+    padding: 0.5rem 1rem;
+    border-radius: 30px;
+    cursor: pointer;
+    font-size: 0.85rem;
+    transition: all 0.2s;
+}
+
+.filter-btn:hover {
+    background: #2b9e4a;
+    color: white;
+}
+
+.filter-btn.active {
+    background: #2b9e4a;
+    color: white;
+}
+
+.stats {
+    text-align: center;
+    margin-top: 1rem;
+    color: #6a7a8a;
+    font-size: 0.9rem;
+}
+
+/* Footer */
+.footer {
+    background: #1a2a3a;
+    color: #aab8c5;
+    padding: 2rem;
+    text-align: center;
+    font-size: 0.85rem;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .hero h1 {
+        font-size: 1.8rem;
+    }
+    .nav-container {
+        flex-direction: column;
+    }
+    .categories, .featured {
+        padding: 2rem 1rem;
+    }
+}
