@@ -4,10 +4,9 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
     <title>L'Avenir en commun - Comprendre le programme</title>
-    <meta name="description" content="Découvrez et comprenez facilement les 500+ propositions du programme L'Avenir en commun. Recherche par thème, public ou mot-clé.">
+    <meta name="description" content="Découvrez et comprenez facilement les 1000+ propositions du programme L'Avenir en commun. Recherche par thème, public ou mot-clé.">
     <link rel="stylesheet" href="css/style.css">
     <style>
-        /* petits ajustements pour le responsive */
         .filter-buttons { display: flex; flex-wrap: wrap; gap: 0.5rem; margin-bottom: 1.5rem; }
         .filter-btn { margin: 0; }
         .results-area { display: none; }
@@ -74,13 +73,14 @@
 
     <script src="js/data.js"></script>
     <script src="js/main.js"></script>
+    <script src="js/measure.js"></script>
     <script>
-        // ------------------------------------------------------------------
-        // 1. FONCTIONS UTILITAIRES
-        // ------------------------------------------------------------------
-        function getCategoryLabel(cat) {
+        // ----------------------------------------------
+        // 1. Mapping complet des catégories (basé sur data.js)
+        // ----------------------------------------------
+        function getCategoryLabelFull(cat) {
             const labels = {
-                "travail": "💼 Travail & Salaire",
+                "travail": "👔 Travail & Salaire",
                 "ecologie": "🌿 Écologie & Climat",
                 "sante": "🏥 Santé",
                 "education": "📚 Éducation",
@@ -114,39 +114,42 @@
             return labels[cat] || cat.charAt(0).toUpperCase() + cat.slice(1);
         }
 
-        // Pour les cartes thématiques : récupérer un extrait de la première mesure de la catégorie
+        // ----------------------------------------------
+        // 2. Chargement des données
+        // ----------------------------------------------
+        let currentMeasures = typeof mesures !== 'undefined' ? mesures : [];
+        const measureCountSpan = document.getElementById('measureCount');
+        if (measureCountSpan && currentMeasures.length) measureCountSpan.textContent = currentMeasures.length;
+
+        // Extraire toutes les catégories uniques
+        const allCategories = [...new Set(currentMeasures.map(m => m.categorie))].sort();
+
+        // ----------------------------------------------
+        // 3. Génération dynamique des filtres
+        // ----------------------------------------------
+        const filterContainer = document.getElementById('dynamicFilterButtons');
+        if (filterContainer) {
+            let buttonsHtml = `<button class="filter-btn active" data-filter="all">📌 Tous</button>`;
+            allCategories.forEach(cat => {
+                buttonsHtml += `<button class="filter-btn" data-filter="${cat}">${getCategoryLabelFull(cat)}</button>`;
+            });
+            filterContainer.innerHTML = buttonsHtml;
+        }
+
+        // ----------------------------------------------
+        // 4. Génération des cartes thématiques
+        // ----------------------------------------------
         function getThemeExcerpt(measuresArray, category) {
             const sample = measuresArray.find(m => m.categorie === category);
             if (sample && sample.resume) return sample.resume.substring(0, 90) + (sample.resume.length > 90 ? "…" : "");
             return "Découvrez toutes les mesures de ce thème.";
         }
 
-        // ------------------------------------------------------------------
-        // 2. CHARGEMENT DES DONNÉES ET DYNAMISATION
-        // ------------------------------------------------------------------
-        let currentMeasures = typeof mesures !== 'undefined' ? mesures : [];
-        const measureCountSpan = document.getElementById('measureCount');
-        if (measureCountSpan && currentMeasures.length) measureCountSpan.textContent = currentMeasures.length;
-
-        // Extraire toutes les catégories uniques présentes dans data.js
-        const allCategories = [...new Set(currentMeasures.map(m => m.categorie))].sort();
-
-        // Remplir dynamiquement les boutons de filtre
-        const filterContainer = document.getElementById('dynamicFilterButtons');
-        if (filterContainer) {
-            let buttonsHtml = `<button class="filter-btn active" data-filter="all">📌 Tous</button>`;
-            allCategories.forEach(cat => {
-                buttonsHtml += `<button class="filter-btn" data-filter="${cat}">${getCategoryLabel(cat)}</button>`;
-            });
-            filterContainer.innerHTML = buttonsHtml;
-        }
-
-        // Remplir dynamiquement les cartes thématiques
-        const categoryCardsContainer = document.getElementById('dynamicCategoryCards');
-        if (categoryCardsContainer) {
+        const cardsContainer = document.getElementById('dynamicCategoryCards');
+        if (cardsContainer) {
             let cardsHtml = '';
             allCategories.forEach(cat => {
-                const label = getCategoryLabel(cat);
+                const label = getCategoryLabelFull(cat);
                 const excerpt = getThemeExcerpt(currentMeasures, cat);
                 cardsHtml += `
                     <a href="#" class="category-card" data-category="${cat}">
@@ -156,12 +159,12 @@
                     </a>
                 `;
             });
-            categoryCardsContainer.innerHTML = cardsHtml;
+            cardsContainer.innerHTML = cardsHtml;
         }
 
-        // ------------------------------------------------------------------
-        // 3. LOGIQUE DE RECHERCHE ET D'AFFICHAGE
-        // ------------------------------------------------------------------
+        // ----------------------------------------------
+        // 5. Fonctions de recherche et d'affichage
+        // ----------------------------------------------
         function displayResults(results) {
             const container = document.getElementById('resultsList');
             const stats = document.getElementById('resultsStats');
@@ -175,7 +178,7 @@
             }
             container.innerHTML = results.map(m => `
                 <div class="measure-card">
-                    <span class="measure-tag">${getCategoryLabel(m.categorie)}</span>
+                    <span class="measure-tag">${getCategoryLabelFull(m.categorie)}</span>
                     <h4>${m.titre}</h4>
                     <p>${m.resume}</p>
                     <a href="mesure.html?id=${m.id}" class="measure-link">Voir le détail →</a>
@@ -211,7 +214,7 @@
             }
             featuredContainer.innerHTML = featured.map(m => `
                 <div class="measure-card">
-                    <span class="measure-tag">${getCategoryLabel(m.categorie)}</span>
+                    <span class="measure-tag">${getCategoryLabelFull(m.categorie)}</span>
                     <h4>${m.titre}</h4>
                     <p>${m.resume.substring(0, 100)}${m.resume.length > 100 ? '…' : ''}</p>
                     <a href="mesure.html?id=${m.id}" class="measure-link">Voir le détail →</a>
@@ -219,9 +222,9 @@
             `).join('');
         }
 
-        // ------------------------------------------------------------------
-        // 4. ÉVÉNEMENTS
-        // ------------------------------------------------------------------
+        // ----------------------------------------------
+        // 6. Événements DOM
+        // ----------------------------------------------
         const searchBtn = document.getElementById('searchBtn');
         const searchInput = document.getElementById('searchInput');
         const closeResults = document.getElementById('closeResults');
@@ -251,7 +254,7 @@
             });
         }
 
-        // Filtres dynamiques (délégation d'événements)
+        // Délégation d'événements pour les filtres et cartes
         document.addEventListener('click', (e) => {
             if (e.target.classList && e.target.classList.contains('filter-btn')) {
                 document.querySelectorAll('.filter-btn').forEach(btn => btn.classList.remove('active'));
@@ -263,7 +266,6 @@
                     displayResults(results);
                 }
             }
-            // Clic sur une carte thématique
             if (e.target.closest('.category-card')) {
                 const card = e.target.closest('.category-card');
                 const category = card.dataset.category;
@@ -277,7 +279,6 @@
             }
         });
 
-        // Toutes les mesures
         if (allMeasuresLink) {
             allMeasuresLink.addEventListener('click', (e) => {
                 e.preventDefault();
@@ -290,9 +291,9 @@
             });
         }
 
-        // Initialisation : afficher les mesures phares
+        // Initialisation
         displayFeatured();
-        console.log(`✅ Base de données chargée : ${currentMeasures.length} mesures disponibles, ${allCategories.length} catégories distinctes.`);
+        console.log(`✅ Base de données chargée : ${currentMeasures.length} mesures, ${allCategories.length} catégories.`);
     </script>
 </body>
 </html>
