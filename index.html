@@ -6,6 +6,14 @@
     <title>L'Avenir en commun - Comprendre le programme</title>
     <meta name="description" content="Découvrez et comprenez facilement les 500+ propositions du programme L'Avenir en commun. Recherche par thème, public ou mot-clé.">
     <link rel="stylesheet" href="css/style.css">
+    <style>
+        /* petits ajustements pour le responsive */
+        .filter-buttons { display: flex; flex-wrap: wrap; gap: 0.5rem; margin-bottom: 1.5rem; }
+        .filter-btn { margin: 0; }
+        .results-area { display: none; }
+        .results-area.show { display: block; }
+        .stats { margin-top: 1rem; font-style: italic; text-align: center; }
+    </style>
 </head>
 <body>
     <nav class="navbar">
@@ -39,22 +47,7 @@
             <h2>📋 Résultats de recherche</h2>
             <button class="close-results" id="closeResults">✕</button>
         </div>
-        <div class="filter-buttons">
-            <!-- Catégories principales -->
-            <button class="filter-btn active" data-filter="all">Tous</button>
-            <button class="filter-btn" data-filter="travail">👔 Travail</button>
-            <button class="filter-btn" data-filter="ecologie">🌿 Écologie</button>
-            <button class="filter-btn" data-filter="sante">🏥 Santé</button>
-            <button class="filter-btn" data-filter="education">📚 Éducation</button>
-            <button class="filter-btn" data-filter="logement">🏠 Logement</button>
-            <button class="filter-btn" data-filter="democratie">🗳️ Démocratie</button>
-            <button class="filter-btn" data-filter="economie">💰 Économie</button>
-            <button class="filter-btn" data-filter="international">🌍 International</button>
-            <button class="filter-btn" data-filter="outremer">🏝️ Outre-mer</button>
-            <button class="filter-btn" data-filter="migrations">🚶 Migrations</button>
-            <button class="filter-btn" data-filter="egalite">🤝 Égalité</button>
-            <button class="filter-btn" data-filter="transports">🚆 Transports</button>
-        </div>
+        <div class="filter-buttons" id="dynamicFilterButtons"></div>
         <div id="resultsList" class="measures-grid"></div>
         <div id="resultsStats" class="stats"></div>
     </div>
@@ -62,68 +55,7 @@
     <section class="categories">
         <h2 class="section-title">Explorer par thème</h2>
         <p class="section-subtitle">Trouvez les mesures qui vous concernent directement</p>
-        <div class="grid-categories">
-            <a href="#" class="category-card" data-category="travail">
-                <div class="category-icon">💼</div>
-                <h3>Travail & Salaire</h3>
-                <p>Retraite à 60 ans, SMIC à 1600€, semaine de 4 jours, fin des CDD précaires</p>
-            </a>
-            <a href="#" class="category-card" data-category="ecologie">
-                <div class="category-icon">🌍</div>
-                <h3>Écologie & Climat</h3>
-                <p>100% énergies renouvelables, sortie du nucléaire, rénovation des logements</p>
-            </a>
-            <a href="#" class="category-card" data-category="sante">
-                <div class="category-icon">🏥</div>
-                <h3>Santé & Hôpital</h3>
-                <p>100% Sécu, fin des déserts médicaux, légalisation du cannabis</p>
-            </a>
-            <a href="#" class="category-card" data-category="education">
-                <div class="category-icon">📚</div>
-                <h3>Éducation</h3>
-                <p>Fin de Parcoursup, gratuité des études, recrutement de 160 000 profs</p>
-            </a>
-            <a href="#" class="category-card" data-category="logement">
-                <div class="category-icon">🏠</div>
-                <h3>Logement</h3>
-                <p>200 000 logements publics/an, encadrement des loyers, zéro sans-abri</p>
-            </a>
-            <a href="#" class="category-card" data-category="democratie">
-                <div class="category-icon">⚖️</div>
-                <h3>Démocratie & Justice</h3>
-                <p>6e République, RIC, proportionnelle, fin de l'état d'urgence</p>
-            </a>
-            <a href="#" class="category-card" data-category="economie">
-                <div class="category-icon">💰</div>
-                <h3>Fiscalité & Impôts</h3>
-                <p>ISF rétabli, 14 tranches d'impôt, héritage maximum à 12M€</p>
-            </a>
-            <a href="#" class="category-card" data-category="international">
-                <div class="category-icon">🌍</div>
-                <h3>International</h3>
-                <p>Sortie de l'OTAN, refondation de la Francophonie, reconnaissance de la Palestine</p>
-            </a>
-            <a href="#" class="category-card" data-category="outremer">
-                <div class="category-icon">🏝️</div>
-                <h3>Outre-mer</h3>
-                <p>Autonomie énergétique, fin de la vie chère, reconnaissance du chlordécone</p>
-            </a>
-            <a href="#" class="category-card" data-category="migrations">
-                <div class="category-icon">🚶</div>
-                <h3>Migrations</h3>
-                <p>Régularisation des sans-papiers, statut de réfugié climatique, fin des CRA</p>
-            </a>
-            <a href="#" class="category-card" data-category="egalite">
-                <div class="category-icon">🤝</div>
-                <h3>Égalité & Social</h3>
-                <p>Lutte contre les discriminations, droits LGBT, égalité femmes-hommes</p>
-            </a>
-            <a href="#" class="category-card" data-category="transports">
-                <div class="category-icon">🚆</div>
-                <h3>Transports</h3>
-                <p>Réouverture des lignes ferroviaires, transports gratuits pour les jeunes</p>
-            </a>
-        </div>
+        <div class="grid-categories" id="dynamicCategoryCards"></div>
     </section>
 
     <section class="featured">
@@ -143,27 +75,104 @@
     <script src="js/data.js"></script>
     <script src="js/main.js"></script>
     <script>
-        // Vérification du chargement des données
-        let currentMeasures = typeof mesures !== 'undefined' ? mesures : [];
-        
-        // Mettre à jour le compteur dans le footer
-        const countSpan = document.getElementById('measureCount');
-        if (countSpan && currentMeasures.length > 0) {
-            countSpan.textContent = currentMeasures.length;
+        // ------------------------------------------------------------------
+        // 1. FONCTIONS UTILITAIRES
+        // ------------------------------------------------------------------
+        function getCategoryLabel(cat) {
+            const labels = {
+                "travail": "💼 Travail & Salaire",
+                "ecologie": "🌿 Écologie & Climat",
+                "sante": "🏥 Santé",
+                "education": "📚 Éducation",
+                "logement": "🏠 Logement",
+                "democratie": "🗳️ Démocratie & Justice",
+                "economie": "💰 Économie & Fiscalité",
+                "international": "🌍 International",
+                "outremer": "🏝️ Outre‑mer",
+                "migrations": "🚶 Migrations",
+                "egalite": "🤝 Égalité & Social",
+                "transports": "🚆 Transports",
+                "numerique": "💻 Numérique & Internet",
+                "defense": "🛡️ Défense & Armées",
+                "europe": "🇪🇺 Europe",
+                "culture": "🎭 Culture",
+                "sport": "⚽ Sport",
+                "handicap": "♿ Handicap",
+                "banques": "🏦 Banques & Finance",
+                "energie": "⚡ Énergie",
+                "espace": "🚀 Espace",
+                "mer": "🌊 Mer & Océan",
+                "foret": "🌲 Forêt",
+                "condition_animale": "🐾 Condition animale",
+                "quartiers_populaires": "🏙️ Quartiers populaires",
+                "enfance": "🧸 Enfance & Protection",
+                "medias": "📺 Médias",
+                "antiracisme": "✊ Antiracisme & Égalité",
+                "ess": "🤝 Économie sociale & solidaire",
+                "jeunesse": "🧑‍🎓 Jeunesse"
+            };
+            return labels[cat] || cat.charAt(0).toUpperCase() + cat.slice(1);
         }
 
+        // Pour les cartes thématiques : récupérer un extrait de la première mesure de la catégorie
+        function getThemeExcerpt(measuresArray, category) {
+            const sample = measuresArray.find(m => m.categorie === category);
+            if (sample && sample.resume) return sample.resume.substring(0, 90) + (sample.resume.length > 90 ? "…" : "");
+            return "Découvrez toutes les mesures de ce thème.";
+        }
+
+        // ------------------------------------------------------------------
+        // 2. CHARGEMENT DES DONNÉES ET DYNAMISATION
+        // ------------------------------------------------------------------
+        let currentMeasures = typeof mesures !== 'undefined' ? mesures : [];
+        const measureCountSpan = document.getElementById('measureCount');
+        if (measureCountSpan && currentMeasures.length) measureCountSpan.textContent = currentMeasures.length;
+
+        // Extraire toutes les catégories uniques présentes dans data.js
+        const allCategories = [...new Set(currentMeasures.map(m => m.categorie))].sort();
+
+        // Remplir dynamiquement les boutons de filtre
+        const filterContainer = document.getElementById('dynamicFilterButtons');
+        if (filterContainer) {
+            let buttonsHtml = `<button class="filter-btn active" data-filter="all">📌 Tous</button>`;
+            allCategories.forEach(cat => {
+                buttonsHtml += `<button class="filter-btn" data-filter="${cat}">${getCategoryLabel(cat)}</button>`;
+            });
+            filterContainer.innerHTML = buttonsHtml;
+        }
+
+        // Remplir dynamiquement les cartes thématiques
+        const categoryCardsContainer = document.getElementById('dynamicCategoryCards');
+        if (categoryCardsContainer) {
+            let cardsHtml = '';
+            allCategories.forEach(cat => {
+                const label = getCategoryLabel(cat);
+                const excerpt = getThemeExcerpt(currentMeasures, cat);
+                cardsHtml += `
+                    <a href="#" class="category-card" data-category="${cat}">
+                        <div class="category-icon">${label.charAt(0)}</div>
+                        <h3>${label}</h3>
+                        <p>${excerpt}</p>
+                    </a>
+                `;
+            });
+            categoryCardsContainer.innerHTML = cardsHtml;
+        }
+
+        // ------------------------------------------------------------------
+        // 3. LOGIQUE DE RECHERCHE ET D'AFFICHAGE
+        // ------------------------------------------------------------------
         function displayResults(results) {
             const container = document.getElementById('resultsList');
             const stats = document.getElementById('resultsStats');
             const area = document.getElementById('resultsArea');
-            
+            if (!container) return;
             if (results.length === 0) {
                 container.innerHTML = '<p style="text-align:center; grid-column:1/-1;">Aucun résultat trouvé. Essayez d\'autres mots-clés.</p>';
                 stats.innerHTML = '';
                 area.classList.add('show');
                 return;
             }
-            
             container.innerHTML = results.map(m => `
                 <div class="measure-card">
                     <span class="measure-tag">${getCategoryLabel(m.categorie)}</span>
@@ -178,119 +187,112 @@
 
         function search(query, filter) {
             let results = currentMeasures;
-            
             if (filter !== 'all') {
                 results = results.filter(m => m.categorie === filter);
             }
-            
             if (query.trim()) {
                 const lowerQuery = query.toLowerCase();
                 results = results.filter(m => 
                     m.titre.toLowerCase().includes(lowerQuery) || 
                     m.resume.toLowerCase().includes(lowerQuery) ||
-                    (m.motscles && m.motscles.some(tag => tag.includes(lowerQuery)))
+                    (m.motscles && m.motscles.some(tag => tag.toLowerCase().includes(lowerQuery)))
                 );
             }
-            
             return results;
         }
 
         function displayFeatured() {
             const featuredContainer = document.getElementById('featuredMeasures');
             if (!featuredContainer) return;
-            
             const featured = currentMeasures.filter(m => m.statut === 'mesure_cle').slice(0, 12);
             if (featured.length === 0) {
                 featuredContainer.innerHTML = '<div style="text-align: center; grid-column: 1/-1;">Aucune mesure phare trouvée.</div>';
                 return;
             }
-            
             featuredContainer.innerHTML = featured.map(m => `
                 <div class="measure-card">
                     <span class="measure-tag">${getCategoryLabel(m.categorie)}</span>
                     <h4>${m.titre}</h4>
-                    <p>${m.resume.substring(0, 100)}${m.resume.length > 100 ? '...' : ''}</p>
+                    <p>${m.resume.substring(0, 100)}${m.resume.length > 100 ? '…' : ''}</p>
                     <a href="mesure.html?id=${m.id}" class="measure-link">Voir le détail →</a>
                 </div>
             `).join('');
         }
 
-        // Event listeners
+        // ------------------------------------------------------------------
+        // 4. ÉVÉNEMENTS
+        // ------------------------------------------------------------------
         const searchBtn = document.getElementById('searchBtn');
         const searchInput = document.getElementById('searchInput');
         const closeResults = document.getElementById('closeResults');
+        const allMeasuresLink = document.getElementById('allMeasuresLink');
+
+        function getActiveFilter() {
+            const active = document.querySelector('.filter-btn.active');
+            return active ? active.dataset.filter : 'all';
+        }
 
         if (searchBtn) {
             searchBtn.addEventListener('click', () => {
                 const query = searchInput.value;
-                const activeFilter = document.querySelector('.filter-btn.active');
-                const filter = activeFilter ? activeFilter.dataset.filter : 'all';
+                const filter = getActiveFilter();
                 const results = search(query, filter);
                 displayResults(results);
             });
         }
-
         if (searchInput) {
             searchInput.addEventListener('keypress', (e) => {
-                if (e.key === 'Enter') {
-                    searchBtn.click();
-                }
+                if (e.key === 'Enter') searchBtn.click();
             });
         }
-
         if (closeResults) {
             closeResults.addEventListener('click', () => {
                 document.getElementById('resultsArea').classList.remove('show');
             });
         }
 
-        // Filter buttons
-        document.querySelectorAll('.filter-btn').forEach(btn => {
-            btn.addEventListener('click', () => {
-                document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
-                btn.classList.add('active');
-                const query = searchInput.value;
-                const filter = btn.dataset.filter;
+        // Filtres dynamiques (délégation d'événements)
+        document.addEventListener('click', (e) => {
+            if (e.target.classList && e.target.classList.contains('filter-btn')) {
+                document.querySelectorAll('.filter-btn').forEach(btn => btn.classList.remove('active'));
+                e.target.classList.add('active');
+                const query = searchInput ? searchInput.value : '';
+                const filter = e.target.dataset.filter;
                 const results = search(query, filter);
                 if (document.getElementById('resultsArea').classList.contains('show')) {
                     displayResults(results);
                 }
-            });
-        });
-
-        // Category cards click
-        document.querySelectorAll('.category-card[data-category]').forEach(card => {
-            card.addEventListener('click', (e) => {
-                e.preventDefault();
+            }
+            // Clic sur une carte thématique
+            if (e.target.closest('.category-card')) {
+                const card = e.target.closest('.category-card');
                 const category = card.dataset.category;
-                const filterBtn = Array.from(document.querySelectorAll('.filter-btn')).find(btn => btn.dataset.filter === category);
-                if (filterBtn) {
-                    filterBtn.click();
-                }
-                searchInput.value = '';
+                const targetFilter = Array.from(document.querySelectorAll('.filter-btn')).find(btn => btn.dataset.filter === category);
+                if (targetFilter) targetFilter.click();
+                if (searchInput) searchInput.value = '';
                 const results = search('', category);
                 displayResults(results);
                 window.scrollTo({ top: document.getElementById('resultsArea').offsetTop - 100, behavior: 'smooth' });
-            });
+                e.preventDefault();
+            }
         });
 
-        // All measures link
-        const allMeasuresLink = document.getElementById('allMeasuresLink');
+        // Toutes les mesures
         if (allMeasuresLink) {
             allMeasuresLink.addEventListener('click', (e) => {
                 e.preventDefault();
-                const allFilter = document.querySelector('.filter-btn[data-filter="all"]');
-                if (allFilter) allFilter.click();
-                searchInput.value = '';
+                const allBtn = document.querySelector('.filter-btn[data-filter="all"]');
+                if (allBtn) allBtn.click();
+                if (searchInput) searchInput.value = '';
                 const results = search('', 'all');
                 displayResults(results);
                 window.scrollTo({ top: document.getElementById('resultsArea').offsetTop - 100, behavior: 'smooth' });
             });
         }
 
-        // Initialize
+        // Initialisation : afficher les mesures phares
         displayFeatured();
-        console.log(`✅ Base de données chargée : ${currentMeasures.length} mesures disponibles`);
+        console.log(`✅ Base de données chargée : ${currentMeasures.length} mesures disponibles, ${allCategories.length} catégories distinctes.`);
     </script>
 </body>
 </html>
