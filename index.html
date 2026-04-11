@@ -12,6 +12,14 @@
         .results-area { display: none; }
         .results-area.show { display: block; }
         .stats { margin-top: 1rem; font-style: italic; text-align: center; }
+        .category-icon {
+            font-size: 2rem;
+            margin-right: 0.5rem;
+            vertical-align: middle;
+        }
+        .category-card h3 {
+            display: inline-block;
+        }
     </style>
 </head>
 <body>
@@ -19,11 +27,11 @@
         <div class="nav-container">
             <a href="#" class="logo">🌱 L'Avenir en commun</a>
             <div class="nav-links">
-                <a href="#">Accueil</a>
+                <a href="#" id="homeLink">Accueil</a>
                 <a href="#" id="allMeasuresLink">Toutes les mesures</a>
-                <a href="#">Par thème</a>
-                <a href="#">Le programme</a>
-                <a href="#">À propos</a>
+                <a href="#" id="themesLink">Par thème</a>
+                <a href="https://lafranceinsoumise.fr/le-programme/" target="_blank" id="programLink">Le programme</a>
+                <a href="a-propos.html" id="aboutLink">À propos</a>
             </div>
         </div>
     </nav>
@@ -31,7 +39,7 @@
     <section class="hero">
         <div class="hero-content">
             <h1>Comprendre le programme<br>qui change la France</h1>
-            <p>500+ propositions pour l'écologie, le travail, la santé, l'éducation et la démocratie. Accessibles à toutes et tous.</p>
+            <p>1000+ propositions pour l'écologie, le travail, la santé, l'éducation et la démocratie. Accessibles à toutes et tous.</p>
             <div class="search-container">
                 <div class="search-box">
                     <input type="text" id="searchInput" placeholder="Rechercher... (ex: retraite, SMIC, logement, écologie)">
@@ -51,7 +59,7 @@
         <div id="resultsStats" class="stats"></div>
     </div>
 
-    <section class="categories">
+    <section class="categories" id="categoriesSection">
         <h2 class="section-title">Explorer par thème</h2>
         <p class="section-subtitle">Trouvez les mesures qui vous concernent directement</p>
         <div class="grid-categories" id="dynamicCategoryCards"></div>
@@ -110,7 +118,6 @@
                 "antiracisme": "✊ Antiracisme & Égalité",
                 "ess": "🤝 Économie sociale & solidaire",
                 "jeunesse": "🧑‍🎓 Jeunesse",
-                // Catégories supplémentaires demandées (prévision)
                 "securite": "🛡️ Sécurité",
                 "social": "🤝 Social",
                 "justice": "⚖️ Justice",
@@ -120,7 +127,7 @@
             return labels[cat] || cat.charAt(0).toUpperCase() + cat.slice(1);
         }
 
-        // Icône dédiée pour chaque catégorie (utilisée dans les cartes)
+        // Icône dédiée pour chaque catégorie (utilisée dans les cartes, à côté du titre)
         function getCategoryIcon(cat) {
             const icons = {
                 "travail": "👔",
@@ -185,7 +192,7 @@
         }
 
         // ----------------------------------------------
-        // 4. Génération des cartes thématiques (avec icône emoji)
+        // 4. Génération des cartes thématiques (icône intégrée au titre)
         // ----------------------------------------------
         function getThemeExcerpt(measuresArray, category) {
             const sample = measuresArray.find(m => m.categorie === category);
@@ -202,8 +209,7 @@
                 const excerpt = getThemeExcerpt(currentMeasures, cat);
                 cardsHtml += `
                     <a href="#" class="category-card" data-category="${cat}">
-                        <div class="category-icon">${icon}</div>
-                        <h3>${label}</h3>
+                        <h3>${icon} ${label}</h3>
                         <p>${excerpt}</p>
                     </a>
                 `;
@@ -278,18 +284,23 @@
         const searchInput = document.getElementById('searchInput');
         const closeResults = document.getElementById('closeResults');
         const allMeasuresLink = document.getElementById('allMeasuresLink');
+        const themesLink = document.getElementById('themesLink');
+        const homeLink = document.getElementById('homeLink');
 
         function getActiveFilter() {
             const active = document.querySelector('.filter-btn.active');
             return active ? active.dataset.filter : 'all';
         }
 
+        // Recherche
         if (searchBtn) {
             searchBtn.addEventListener('click', () => {
                 const query = searchInput.value;
                 const filter = getActiveFilter();
                 const results = search(query, filter);
                 displayResults(results);
+                // Scroll légèrement pour voir les résultats
+                document.getElementById('resultsArea').scrollIntoView({ behavior: 'smooth', block: 'start' });
             });
         }
         if (searchInput) {
@@ -300,6 +311,42 @@
         if (closeResults) {
             closeResults.addEventListener('click', () => {
                 document.getElementById('resultsArea').classList.remove('show');
+            });
+        }
+
+        // Toutes les mesures
+        if (allMeasuresLink) {
+            allMeasuresLink.addEventListener('click', (e) => {
+                e.preventDefault();
+                const allBtn = document.querySelector('.filter-btn[data-filter="all"]');
+                if (allBtn) allBtn.click();
+                if (searchInput) searchInput.value = '';
+                const results = search('', 'all');
+                displayResults(results);
+                document.getElementById('resultsArea').scrollIntoView({ behavior: 'smooth', block: 'start' });
+            });
+        }
+
+        // Par thème : scroll vers la section des catégories
+        if (themesLink) {
+            themesLink.addEventListener('click', (e) => {
+                e.preventDefault();
+                const section = document.getElementById('categoriesSection');
+                if (section) {
+                    section.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                }
+                // Optionnel : fermer les résultats si ouverts
+                document.getElementById('resultsArea').classList.remove('show');
+            });
+        }
+
+        // Accueil : scroll tout en haut
+        if (homeLink) {
+            homeLink.addEventListener('click', (e) => {
+                e.preventDefault();
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+                document.getElementById('resultsArea').classList.remove('show');
+                if (searchInput) searchInput.value = '';
             });
         }
 
@@ -316,6 +363,7 @@
                 }
             }
             if (e.target.closest('.category-card')) {
+                e.preventDefault();
                 const card = e.target.closest('.category-card');
                 const category = card.dataset.category;
                 const targetFilter = Array.from(document.querySelectorAll('.filter-btn')).find(btn => btn.dataset.filter === category);
@@ -323,22 +371,9 @@
                 if (searchInput) searchInput.value = '';
                 const results = search('', category);
                 displayResults(results);
-                window.scrollTo({ top: document.getElementById('resultsArea').offsetTop - 100, behavior: 'smooth' });
-                e.preventDefault();
+                document.getElementById('resultsArea').scrollIntoView({ behavior: 'smooth', block: 'start' });
             }
         });
-
-        if (allMeasuresLink) {
-            allMeasuresLink.addEventListener('click', (e) => {
-                e.preventDefault();
-                const allBtn = document.querySelector('.filter-btn[data-filter="all"]');
-                if (allBtn) allBtn.click();
-                if (searchInput) searchInput.value = '';
-                const results = search('', 'all');
-                displayResults(results);
-                window.scrollTo({ top: document.getElementById('resultsArea').offsetTop - 100, behavior: 'smooth' });
-            });
-        }
 
         // Initialisation
         displayFeatured();
