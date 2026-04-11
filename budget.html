@@ -51,7 +51,7 @@
             margin-bottom: 0.5rem;
         }
         .total-item .amount {
-            font-size: 2.2rem;
+            font-size: 2rem;
             font-weight: bold;
         }
         .total-item .note {
@@ -185,100 +185,104 @@
 
     <script src="js/data.js"></script>
     <script>
-        // Extrait le montant annuel en euros à partir d'une chaîne de financement
-        // Retourne { amount: number (en euros par an), years: number|null (période en années si spécifiée), rawText: string }
-        function extractBudgetWithPeriod(text) {
-            if (!text || typeof text !== 'string') return { amount: 0, years: null, rawText: text };
+        // Extrait le montant et la période
+        function extractBudgetDetails(text) {
+            if (!text || typeof text !== 'string') return { amount: 0, type: 'unknown', years: null };
             
-            // Cherche un montant et éventuellement une période "sur X ans"
-            // Exemples: "5 milliards d'euros par an" -> years = 1
-            // "10 milliards d'euros sur 5 ans" -> years = 5
-            // "2 milliards d'euros" -> years = null (on considère annuel par défaut? Non, on va traiter à part)
-            
-            let amount = 0;
-            let years = null;
-            
-            // D'abord extraire le montant et l'unité
             const amountRegex = /(\d+(?:[.,]\d+)?)\s*(milliards?|millions?)\s*d'?euros?/i;
             const amountMatch = text.match(amountRegex);
-            if (!amountMatch) return { amount: 0, years: null, rawText: text };
+            if (!amountMatch) return { amount: 0, type: 'unknown', years: null };
             
             let value = parseFloat(amountMatch[1].replace(',', '.'));
             const unit = amountMatch[2].toLowerCase();
             if (unit.startsWith('milliard')) value *= 1e9;
             else if (unit.startsWith('million')) value *= 1e6;
             
-            // Chercher une période "sur X ans" ou "sur X années"
-            const periodRegex = /sur\s+(\d+(?:[.,]\d+)?)\s*(?:années?|ans)/i;
-            const periodMatch = text.match(periodRegex);
-            if (periodMatch) {
-                years = parseFloat(periodMatch[1].replace(',', '.'));
-            }
-            // Chercher "par an" ou "/an" -> indique que c'est déjà annuel
+            // Détection de la période
+            let type = 'unknown';
+            let years = null;
+            
             if (/\bpar\s*an\b|\/an\b/i.test(text)) {
+                type = 'annual';
                 years = 1;
+            } else {
+                const periodMatch = text.match(/sur\s+(\d+(?:[.,]\d+)?)\s*(?:années?|ans)/i);
+                if (periodMatch) {
+                    type = 'multiyear';
+                    years = parseFloat(periodMatch[1].replace(',', '.'));
+                } else {
+                    type = 'lumpsum'; // montant sans période
+                }
             }
             
-            return { amount: value, years: years, rawText: text };
+            return { amount: value, type: type, years: years };
         }
         
-        // Calcule le montant annualisé (si years est connu, on divise; sinon on retourne le montant brut)
-        function getAnnualizedAmount(amount, years) {
-            if (years && years > 0) return amount / years;
-            return amount; // par défaut on suppose que c'est annuel (mais on va distinguer)
-        }
-        
-        // Formate en milliards d'euros
         function formatBillions(euros) {
             if (euros === 0) return '-';
             const billions = euros / 1e9;
             return billions.toFixed(1) + ' Md€';
         }
         
-        // Pour l'affichage, on veut aussi le libellé de période
-        function getPeriodLabel(years) {
-            if (years === 1) return '(par an)';
-            if (years && years > 0) return `(sur ${years} ans)`;
-            return '';
-        }
-
         if (typeof mesures === 'undefined' || !mesures.length) {
             document.getElementById('budgetContent').innerHTML = '<div class="warning">❌ Base de données non chargée. Vérifiez que data.js est présent.</div>';
         } else {
-            const measuresWithBudget = []; // { titre, categorie, brut, annualise, years, periodLabel }
-            let totalBrut = 0;
-            let totalAnnualise = 0;
-            const categoryMap = new Map(); // cat -> { brut: 0, annualise: 0, measures: [] }
+            const measuresWithBudget = []; // détail
+            let totalBrut = 0;      // somme de tous les montants (bruts)
+            let totalAnnualExplicit = 0; // montants marqués "par an"
+            let totalAnnualizedMultiyear = 0; // montants pluriannuels annualisés
+            let countAnnual = 0, countMultiyear = 0, countLumpsum = 0;
+            
+            const categoryMap = new Map(); // cat -> { brut, annualExplicit, annualizedMultiyear, measures: [] }
             
             for (const m of mesures) {
-                const { amount, years, rawText } = extractBudgetWithPeriod(m.financement);
+                const { amount, type, years } = extractBudgetDetails(m.financement);
                 if (amount === 0) continue;
                 
-                const annualized = getAnnualizedAmount(amount, years);
                 totalBrut += amount;
-                totalAnnualise += annualized;
+                let annualizedValue = 0;
+                let displayType = '';
+                
+                if (type === 'annual') {
+                    totalAnnualExplicit += amount;
+                    annualizedValue = amount;
+                    displayType = '(par an)';
+                    countAnnual++;
+                } else if (type === 'multiyear' && years && years > 0) {
+                    const annual = amount / years;
+                    totalAnnualizedMultiyear += annual;
+                    annualizedValue = annual;
+                    displayType = `(sur ${years} ans → ${formatBillions(annual)}/an)`;
+                    countMultiyear++;
+                } else {
+                    // lumpsum : pas d'annualisation
+                    annualizedValue = amount;
+                    displayType = '(montant total, période non précisée)';
+                    countLumpsum++;
+                }
                 
                 measuresWithBudget.push({
                     id: m.id,
                     titre: m.titre,
                     categorie: m.categorie,
                     brut: amount,
-                    annualise: annualized,
-                    years: years,
-                    periodLabel: getPeriodLabel(years)
+                    annualized: annualizedValue,
+                    type: type,
+                    displayType: displayType,
+                    years: years
                 });
                 
                 if (!categoryMap.has(m.categorie)) {
-                    categoryMap.set(m.categorie, { brut: 0, annualise: 0, measures: [] });
+                    categoryMap.set(m.categorie, { brut: 0, annualExplicit: 0, annualizedMultiyear: 0, measures: [] });
                 }
                 const cat = categoryMap.get(m.categorie);
                 cat.brut += amount;
-                cat.annualise += annualized;
-                cat.measures.push({ titre: m.titre, brut: amount, annualise: annualized, periodLabel: getPeriodLabel(years) });
+                if (type === 'annual') cat.annualExplicit += amount;
+                if (type === 'multiyear') cat.annualizedMultiyear += (amount / years);
+                cat.measures.push({ titre: m.titre, brut: amount, annualized: annualizedValue, displayType: displayType });
             }
             
-            // Trier les catégories par annualisé décroissant
-            const sortedCategories = Array.from(categoryMap.entries()).sort((a, b) => b[1].annualise - a[1].annualise);
+            const sortedCategories = Array.from(categoryMap.entries()).sort((a, b) => b[1].annualExplicit + b[1].annualizedMultiyear - (a[1].annualExplicit + a[1].annualizedMultiyear));
             
             function getCatLabel(cat) {
                 const labels = {
@@ -323,34 +327,40 @@
                         <div class="total-item">
                             <div class="label">💰 Total brut (toutes durées)</div>
                             <div class="amount">${formatBillions(totalBrut)}</div>
-                            <div class="note">Montants bruts, sans annualisation</div>
+                            <div class="note">Somme des montants tels qu’écrits</div>
                         </div>
                         <div class="total-item">
-                            <div class="label">📅 Total annualisé estimé</div>
-                            <div class="amount">${formatBillions(totalAnnualise)}</div>
-                            <div class="note">Montants ramenés à une base annuelle (quand durée connue)</div>
+                            <div class="label">📆 Montants annuels explicites</div>
+                            <div class="amount">${formatBillions(totalAnnualExplicit)}</div>
+                            <div class="note">Mesures avec "par an" (${countAnnual} mesures)</div>
+                        </div>
+                        <div class="total-item">
+                            <div class="label">📅 Annualisé des montants pluriannuels</div>
+                            <div class="amount">${formatBillions(totalAnnualizedMultiyear)}</div>
+                            <div class="note">Mesures avec durée précise (${countMultiyear} mesures)</div>
                         </div>
                     </div>
                     <div class="warning" style="margin-top: 1rem; background: rgba(255,255,255,0.2); border-left-color: white;">
-                        ⚠️ Total non affiné – estimation expérimentale. Les chiffres bruts incluent des montants pluriannuels non annualisés, d'où un total très élevé. Le total annualisé est plus réaliste mais reste partiel.
+                        ⚠️ <strong>Lecture</strong> : Les montants sans période (${countLumpsum} mesures) ne sont pas annualisés et ne figurent que dans le total brut. Le coût annualisé total serait au maximum la somme des deux dernières colonnes (${formatBillions(totalAnnualExplicit + totalAnnualizedMultiyear)}), mais de nombreuses mesures n’ont pas de période précisée.
                     </div>
                 </div>
                 
-                <h3>📂 Détail par thème (montant annualisé)</h3>
+                <h3>📂 Détail par thème (montant annualisé quand disponible)</h3>
                 <div class="category-grid">
             `;
             
             for (const [cat, data] of sortedCategories) {
+                const totalAnnualCat = data.annualExplicit + data.annualizedMultiyear;
                 html += `
                     <div class="category-card-budget">
                         <div class="category-header">
                             <span class="category-name">${getCatLabel(cat)}</span>
-                            <span class="category-amount">${formatBillions(data.annualise)}</span>
+                            <span class="category-amount">${formatBillions(totalAnnualCat)}</span>
                         </div>
                         <ul class="measure-list">
                 `;
                 for (const m of data.measures.slice(0, 5)) {
-                    html += `<li><span class="measure-title">${m.titre}</span><span class="measure-amount">${formatBillions(m.annualise)} <span class="measure-period">${m.periodLabel}</span></span></li>`;
+                    html += `<li><span class="measure-title">${m.titre}</span><span class="measure-amount">${formatBillions(m.annualized)} <span class="measure-period">${m.displayType}</span></span></li>`;
                 }
                 if (data.measures.length > 5) {
                     html += `<li class="no-data">+ ${data.measures.length - 5} autre(s) mesure(s)</li>`;
@@ -359,16 +369,16 @@
             }
             html += `</div>`;
             
-            // Liste des mesures avec budget
+            // Liste détaillée
             html += `<div class="measures-list-container">
                         <h3>🔍 Liste de toutes les mesures avec budget identifié</h3>
                         <div class="two-columns">
                             <ul style="list-style: none; margin: 0; padding: 0;">
             `;
-            measuresWithBudget.sort((a,b) => b.annualise - a.annualise).forEach(m => {
+            measuresWithBudget.sort((a,b) => b.annualized - a.annualized).forEach(m => {
                 html += `<li style="margin-bottom: 0.5rem;">
                             <strong>${m.titre}</strong> (${getCatLabel(m.categorie)}) : 
-                            ${formatBillions(m.annualise)} <span class="measure-period">${m.periodLabel}</span>
+                            ${formatBillions(m.annualized)} <span class="measure-period">${m.displayType}</span>
                             <span style="font-size:0.7rem; color:#888;">(brut: ${formatBillions(m.brut)})</span>
                          </li>`;
             });
@@ -376,12 +386,11 @@
                         </div>
                     </div>`;
             
-            // Avertissement final
             html += `<div class="warning" style="margin-top: 2rem;">
                         📌 <strong>Limites de l’extraction</strong> : 
                         <ul style="margin: 0.5rem 0 0 1.5rem;">
                             <li>Seuls les montants explicitement indiqués avec "millions/milliards d'euros" sont capturés.</li>
-                            <li>Les périodes "sur X ans" sont détectées et annualisées. Sans indication, le montant est considéré comme brut (non annualisé).</li>
+                            <li>Les montants sans "par an" ou "sur X ans" sont considérés comme des montants bruts (non annualisables).</li>
                             <li>De nombreuses mesures ont des financements intégrés dans des plans globaux (ex: "inclus dans le plan rénovation") et ne sont pas comptabilisées.</li>
                             <li>Ce tableau de bord est une <strong>expérience de visualisation</strong>, pas une analyse budgétaire définitive.</li>
                         </ul>
