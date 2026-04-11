@@ -76,7 +76,7 @@
     <script src="js/measure.js"></script>
     <script>
         // ----------------------------------------------
-        // 1. Mapping complet des catégories (basé sur data.js)
+        // 1. Mapping complet des catégories (libellés + icônes)
         // ----------------------------------------------
         function getCategoryLabelFull(cat) {
             const labels = {
@@ -109,9 +109,57 @@
                 "medias": "📺 Médias",
                 "antiracisme": "✊ Antiracisme & Égalité",
                 "ess": "🤝 Économie sociale & solidaire",
-                "jeunesse": "🧑‍🎓 Jeunesse"
+                "jeunesse": "🧑‍🎓 Jeunesse",
+                // Catégories supplémentaires demandées (prévision)
+                "securite": "🛡️ Sécurité",
+                "social": "🤝 Social",
+                "justice": "⚖️ Justice",
+                "institutions": "🏛️ Institutions",
+                "recherche": "🔬 Recherche"
             };
             return labels[cat] || cat.charAt(0).toUpperCase() + cat.slice(1);
+        }
+
+        // Icône dédiée pour chaque catégorie (utilisée dans les cartes)
+        function getCategoryIcon(cat) {
+            const icons = {
+                "travail": "👔",
+                "ecologie": "🌿",
+                "sante": "🏥",
+                "education": "📚",
+                "logement": "🏠",
+                "democratie": "🗳️",
+                "economie": "💰",
+                "international": "🌍",
+                "outremer": "🏝️",
+                "migrations": "🚶",
+                "egalite": "🤝",
+                "transports": "🚆",
+                "numerique": "💻",
+                "defense": "🛡️",
+                "europe": "🇪🇺",
+                "culture": "🎭",
+                "sport": "⚽",
+                "handicap": "♿",
+                "banques": "🏦",
+                "energie": "⚡",
+                "espace": "🚀",
+                "mer": "🌊",
+                "foret": "🌲",
+                "condition_animale": "🐾",
+                "quartiers_populaires": "🏙️",
+                "enfance": "🧸",
+                "medias": "📺",
+                "antiracisme": "✊",
+                "ess": "🤝",
+                "jeunesse": "🧑‍🎓",
+                "securite": "🛡️",
+                "social": "🤝",
+                "justice": "⚖️",
+                "institutions": "🏛️",
+                "recherche": "🔬"
+            };
+            return icons[cat] || "📌";
         }
 
         // ----------------------------------------------
@@ -137,7 +185,7 @@
         }
 
         // ----------------------------------------------
-        // 4. Génération des cartes thématiques
+        // 4. Génération des cartes thématiques (avec icône emoji)
         // ----------------------------------------------
         function getThemeExcerpt(measuresArray, category) {
             const sample = measuresArray.find(m => m.categorie === category);
@@ -150,10 +198,11 @@
             let cardsHtml = '';
             allCategories.forEach(cat => {
                 const label = getCategoryLabelFull(cat);
+                const icon = getCategoryIcon(cat);
                 const excerpt = getThemeExcerpt(currentMeasures, cat);
                 cardsHtml += `
                     <a href="#" class="category-card" data-category="${cat}">
-                        <div class="category-icon">${label.charAt(0)}</div>
+                        <div class="category-icon">${icon}</div>
                         <h3>${label}</h3>
                         <p>${excerpt}</p>
                     </a>
