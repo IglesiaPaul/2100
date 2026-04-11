@@ -44,7 +44,7 @@
         }
         .category-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
             gap: 1.5rem;
             margin-bottom: 2rem;
         }
@@ -88,21 +88,40 @@
         }
         .measure-title {
             flex: 1;
+            padding-right: 0.5rem;
         }
         .measure-amount {
             font-weight: 500;
             color: #2c3e50;
+            white-space: nowrap;
         }
         .no-data {
             color: #999;
             font-style: italic;
         }
-        hr {
-            margin: 2rem 0;
+        .measures-list-container {
+            background: white;
+            border-radius: 16px;
+            padding: 1rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+        }
+        .two-columns {
+            column-count: 2;
+            column-gap: 2rem;
+        }
+        .two-columns li {
+            break-inside: avoid;
+            margin-bottom: 0.5rem;
+        }
+        @media (max-width: 768px) {
+            .two-columns {
+                column-count: 1;
+            }
         }
         footer {
             text-align: center;
-            margin-top: 3rem;
+            margin-top: 2rem;
             padding: 1rem;
             color: #666;
         }
@@ -117,10 +136,8 @@
                 <a href="index.html#allMeasuresLink">Toutes les mesures</a>
                 <a href="index.html#themesLink">Par thème</a>
                 <a href="https://lafranceinsoumise.fr/le-programme/" target="_blank">Le programme</a>
-
-                <a href="budget.html" style="font-weight: bold;">💰 Budget</a>
                 <a href="a-propos.html">À propos</a>
-                
+                <a href="budget.html" style="font-weight: bold;">💰 Budget</a>
             </div>
         </div>
     </nav>
@@ -142,24 +159,17 @@
 
     <script src="js/data.js"></script>
     <script>
-        // Fonction pour extraire un montant annuel (en euros) à partir d'une chaîne de financement
         function extractAnnualBudget(text) {
             if (!text || typeof text !== 'string') return 0;
-            // Recherche de motifs comme "5 milliards d'euros par an", "500 millions par an", "2 milliards d'euros"
-            // On capture le nombre et l'unité (milliard/million)
             const regex = /(\d+(?:[.,]\d+)?)\s*(milliards?|millions?)\s*d'?euros?\s*(?:par\s*an)?/i;
             const match = text.match(regex);
             if (match) {
                 let amount = parseFloat(match[1].replace(',', '.'));
                 const unit = match[2].toLowerCase();
-                if (unit.startsWith('milliard')) {
-                    amount = amount * 1e9;
-                } else if (unit.startsWith('million')) {
-                    amount = amount * 1e6;
-                }
+                if (unit.startsWith('milliard')) amount *= 1e9;
+                else if (unit.startsWith('million')) amount *= 1e6;
                 return amount;
             }
-            // Second essai : "10 milliards" (sans "d'euros")
             const regex2 = /(\d+(?:[.,]\d+)?)\s*(milliards?|millions?)(?:\s+par\s+an)?/i;
             const match2 = text.match(regex2);
             if (match2) {
@@ -172,28 +182,24 @@
             return 0;
         }
 
-        // Formater un montant en milliards d'euros (avec 1 décimale)
         function formatBillions(euros) {
             if (euros === 0) return '-';
             const billions = euros / 1e9;
             return billions.toFixed(1) + ' Md€';
         }
 
-        // Vérifier que mesures est chargé
         if (typeof mesures === 'undefined' || !mesures.length) {
             document.getElementById('budgetContent').innerHTML = '<div class="warning">❌ Base de données non chargée. Vérifiez que data.js est présent.</div>';
         } else {
-            // 1. Analyser chaque mesure
             const measuresWithBudget = [];
             let totalGeneral = 0;
-            const categoryMap = new Map(); // cat -> { total, measures: [{title, amount}] }
+            const categoryMap = new Map();
 
             for (const m of mesures) {
                 const amount = extractAnnualBudget(m.financement);
                 if (amount > 0) {
                     measuresWithBudget.push({ id: m.id, titre: m.titre, categorie: m.categorie, amount });
                     totalGeneral += amount;
-
                     if (!categoryMap.has(m.categorie)) {
                         categoryMap.set(m.categorie, { total: 0, measures: [] });
                     }
@@ -203,10 +209,8 @@
                 }
             }
 
-            // Trier les catégories par total décroissant
             const sortedCategories = Array.from(categoryMap.entries()).sort((a, b) => b[1].total - a[1].total);
 
-            // Fonction pour obtenir le libellé lisible d'une catégorie (réutiliser getCategoryLabelFull si disponible, sinon simple)
             function getCatLabel(cat) {
                 const labels = {
                     "travail": "👔 Travail & Salaire",
@@ -243,7 +247,6 @@
                 return labels[cat] || cat;
             }
 
-            // Construction du HTML
             let html = `
                 <div class="total-card">
                     <h2>📊 Budget total estimé (par an)</h2>
@@ -264,7 +267,7 @@
                         </div>
                         <ul class="measure-list">
                 `;
-                for (const m of data.measures.slice(0, 5)) { // afficher max 5 mesures par thème
+                for (const m of data.measures.slice(0, 5)) {
                     html += `<li><span class="measure-title">${m.titre}</span><span class="measure-amount">${formatBillions(m.amount)}</span></li>`;
                 }
                 if (data.measures.length > 5) {
@@ -272,16 +275,25 @@
                 }
                 html += `</ul></div>`;
             }
+            html += `</div>`;
 
-            html += `</div><hr><h3>🔍 Liste de toutes les mesures avec budget identifié</h3><div class="category-grid">`;
-            // Optionnel : afficher toutes les mesures avec budget (on peut les mettre dans une liste simple)
-            html += `<ul style="column-count: 2; list-style: none;">`;
+            // Liste des mesures avec budget, dans un conteneur séparé
+            html += `<div class="measures-list-container">
+                        <h3>🔍 Liste de toutes les mesures avec budget identifié</h3>
+                        <div class="two-columns">
+                            <ul style="list-style: none; margin: 0; padding: 0;">
+            `;
             measuresWithBudget.sort((a,b) => b.amount - a.amount).forEach(m => {
                 html += `<li style="margin-bottom: 0.5rem;"><strong>${m.titre}</strong> (${getCatLabel(m.categorie)}) : ${formatBillions(m.amount)}</li>`;
             });
-            html += `</ul>`;
+            html += `       </ul>
+                        </div>
+                    </div>`;
 
-            html += `<p class="warning" style="margin-top: 2rem;">📌 <strong>Limites de l’extraction</strong> : Seuls les montants explicitement indiqués comme "X milliards/millions par an" ont été pris en compte. De nombreuses mesures ont des financements intégrés dans des plans globaux (ex: "inclus dans le plan rénovation") et ne sont pas comptabilisées ici. Ce tableau de bord est une <strong>expérience de visualisation</strong>, pas une analyse budgétaire définitive.</p>`;
+            // Carte d'avertissement séparée
+            html += `<div class="warning" style="margin-top: 2rem;">
+                        📌 <strong>Limites de l’extraction</strong> : Seuls les montants explicitement indiqués comme "X milliards/millions par an" ont été pris en compte. De nombreuses mesures ont des financements intégrés dans des plans globaux (ex: "inclus dans le plan rénovation") et ne sont pas comptabilisées ici. Ce tableau de bord est une <strong>expérience de visualisation</strong>, pas une analyse budgétaire définitive.
+                    </div>`;
 
             document.getElementById('budgetContent').innerHTML = html;
         }
