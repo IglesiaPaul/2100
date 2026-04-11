@@ -1,0 +1,288 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Budget estimé - L'Avenir en commun (expérimental)</title>
+    <link rel="stylesheet" href="css/style.css">
+    <style>
+        body {
+            background: #f5f7fa;
+        }
+        .budget-container {
+            max-width: 1200px;
+            margin: 2rem auto;
+            padding: 1rem;
+        }
+        .warning {
+            background: #fff3cd;
+            border-left: 5px solid #ffc107;
+            padding: 1rem;
+            margin-bottom: 2rem;
+            border-radius: 8px;
+        }
+        .total-card {
+            background: linear-gradient(135deg, #2b9e4a, #1e6b34);
+            color: white;
+            padding: 1.5rem;
+            border-radius: 20px;
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+        .total-card h2 {
+            margin: 0;
+            font-size: 1.5rem;
+        }
+        .total-card .amount {
+            font-size: 3rem;
+            font-weight: bold;
+            margin: 0.5rem 0;
+        }
+        .total-card .note {
+            font-size: 0.8rem;
+            opacity: 0.9;
+        }
+        .category-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+        .category-card-budget {
+            background: white;
+            border-radius: 16px;
+            padding: 1rem;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            transition: transform 0.2s;
+        }
+        .category-card-budget:hover {
+            transform: translateY(-3px);
+        }
+        .category-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: baseline;
+            border-bottom: 2px solid #eee;
+            padding-bottom: 0.5rem;
+            margin-bottom: 1rem;
+        }
+        .category-name {
+            font-weight: bold;
+            font-size: 1.2rem;
+        }
+        .category-amount {
+            font-weight: bold;
+            color: #2b9e4a;
+        }
+        .measure-list {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+            font-size: 0.85rem;
+        }
+        .measure-list li {
+            padding: 0.3rem 0;
+            border-bottom: 1px solid #f0f0f0;
+            display: flex;
+            justify-content: space-between;
+        }
+        .measure-title {
+            flex: 1;
+        }
+        .measure-amount {
+            font-weight: 500;
+            color: #2c3e50;
+        }
+        .no-data {
+            color: #999;
+            font-style: italic;
+        }
+        hr {
+            margin: 2rem 0;
+        }
+        footer {
+            text-align: center;
+            margin-top: 3rem;
+            padding: 1rem;
+            color: #666;
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar">
+        <div class="nav-container">
+            <a href="index.html" class="logo">🌱 L'Avenir en commun</a>
+            <div class="nav-links">
+                <a href="index.html">Accueil</a>
+                <a href="index.html#allMeasuresLink">Toutes les mesures</a>
+                <a href="index.html#themesLink">Par thème</a>
+                <a href="https://lafranceinsoumise.fr/le-programme/" target="_blank">Le programme</a>
+                <a href="a-propos.html">À propos</a>
+                <a href="budget.html" style="font-weight: bold;">💰 Budget</a>
+            </div>
+        </div>
+    </nav>
+
+    <div class="budget-container">
+        <div class="warning">
+            ⚠️ <strong>Note expérimentale</strong> : Cette page tente d’extraire automatiquement les montants budgétaires à partir du champ <code>financement</code> des mesures. Tous les chiffres ne sont pas toujours explicites (ex: "inclus dans le plan…"). Les résultats sont donc <strong>partiels et indicatifs</strong>. Cette analyse est un laboratoire pour visualiser l’effort budgétaire du programme.
+        </div>
+
+        <div id="budgetContent">
+            <div style="text-align: center;">Chargement des données...</div>
+        </div>
+
+        <footer>
+            🔍 Extraction automatique – Les montants en euros sont convertis en milliards pour lisibilité.<br>
+            Données issues de <a href="js/data.js">data.js</a> – Mise à jour continue.
+        </footer>
+    </div>
+
+    <script src="js/data.js"></script>
+    <script>
+        // Fonction pour extraire un montant annuel (en euros) à partir d'une chaîne de financement
+        function extractAnnualBudget(text) {
+            if (!text || typeof text !== 'string') return 0;
+            // Recherche de motifs comme "5 milliards d'euros par an", "500 millions par an", "2 milliards d'euros"
+            // On capture le nombre et l'unité (milliard/million)
+            const regex = /(\d+(?:[.,]\d+)?)\s*(milliards?|millions?)\s*d'?euros?\s*(?:par\s*an)?/i;
+            const match = text.match(regex);
+            if (match) {
+                let amount = parseFloat(match[1].replace(',', '.'));
+                const unit = match[2].toLowerCase();
+                if (unit.startsWith('milliard')) {
+                    amount = amount * 1e9;
+                } else if (unit.startsWith('million')) {
+                    amount = amount * 1e6;
+                }
+                return amount;
+            }
+            // Second essai : "10 milliards" (sans "d'euros")
+            const regex2 = /(\d+(?:[.,]\d+)?)\s*(milliards?|millions?)(?:\s+par\s+an)?/i;
+            const match2 = text.match(regex2);
+            if (match2) {
+                let amount = parseFloat(match2[1].replace(',', '.'));
+                const unit = match2[2].toLowerCase();
+                if (unit.startsWith('milliard')) amount *= 1e9;
+                else if (unit.startsWith('million')) amount *= 1e6;
+                return amount;
+            }
+            return 0;
+        }
+
+        // Formater un montant en milliards d'euros (avec 1 décimale)
+        function formatBillions(euros) {
+            if (euros === 0) return '-';
+            const billions = euros / 1e9;
+            return billions.toFixed(1) + ' Md€';
+        }
+
+        // Vérifier que mesures est chargé
+        if (typeof mesures === 'undefined' || !mesures.length) {
+            document.getElementById('budgetContent').innerHTML = '<div class="warning">❌ Base de données non chargée. Vérifiez que data.js est présent.</div>';
+        } else {
+            // 1. Analyser chaque mesure
+            const measuresWithBudget = [];
+            let totalGeneral = 0;
+            const categoryMap = new Map(); // cat -> { total, measures: [{title, amount}] }
+
+            for (const m of mesures) {
+                const amount = extractAnnualBudget(m.financement);
+                if (amount > 0) {
+                    measuresWithBudget.push({ id: m.id, titre: m.titre, categorie: m.categorie, amount });
+                    totalGeneral += amount;
+
+                    if (!categoryMap.has(m.categorie)) {
+                        categoryMap.set(m.categorie, { total: 0, measures: [] });
+                    }
+                    const catData = categoryMap.get(m.categorie);
+                    catData.total += amount;
+                    catData.measures.push({ titre: m.titre, amount });
+                }
+            }
+
+            // Trier les catégories par total décroissant
+            const sortedCategories = Array.from(categoryMap.entries()).sort((a, b) => b[1].total - a[1].total);
+
+            // Fonction pour obtenir le libellé lisible d'une catégorie (réutiliser getCategoryLabelFull si disponible, sinon simple)
+            function getCatLabel(cat) {
+                const labels = {
+                    "travail": "👔 Travail & Salaire",
+                    "ecologie": "🌿 Écologie & Climat",
+                    "sante": "🏥 Santé",
+                    "education": "📚 Éducation",
+                    "logement": "🏠 Logement",
+                    "democratie": "🗳️ Démocratie & Justice",
+                    "economie": "💰 Économie & Fiscalité",
+                    "international": "🌍 International",
+                    "outremer": "🏝️ Outre‑mer",
+                    "migrations": "🚶 Migrations",
+                    "egalite": "🤝 Égalité & Social",
+                    "transports": "🚆 Transports",
+                    "numerique": "💻 Numérique & Internet",
+                    "defense": "🛡️ Défense & Armées",
+                    "europe": "🇪🇺 Europe",
+                    "culture": "🎭 Culture",
+                    "sport": "⚽ Sport",
+                    "handicap": "♿ Handicap",
+                    "banques": "🏦 Banques & Finance",
+                    "energie": "⚡ Énergie",
+                    "espace": "🚀 Espace",
+                    "mer": "🌊 Mer & Océan",
+                    "foret": "🌲 Forêt",
+                    "condition_animale": "🐾 Condition animale",
+                    "quartiers_populaires": "🏙️ Quartiers populaires",
+                    "enfance": "🧸 Enfance & Protection",
+                    "medias": "📺 Médias",
+                    "antiracisme": "✊ Antiracisme & Égalité",
+                    "ess": "🤝 Économie sociale & solidaire",
+                    "jeunesse": "🧑‍🎓 Jeunesse"
+                };
+                return labels[cat] || cat;
+            }
+
+            // Construction du HTML
+            let html = `
+                <div class="total-card">
+                    <h2>📊 Budget total estimé (par an)</h2>
+                    <div class="amount">${formatBillions(totalGeneral)}</div>
+                    <div class="note">Basé sur ${measuresWithBudget.length} mesures comportant un chiffrage explicite</div>
+                </div>
+                
+                <h3>📂 Détail par thème</h3>
+                <div class="category-grid">
+            `;
+
+            for (const [cat, data] of sortedCategories) {
+                html += `
+                    <div class="category-card-budget">
+                        <div class="category-header">
+                            <span class="category-name">${getCatLabel(cat)}</span>
+                            <span class="category-amount">${formatBillions(data.total)}</span>
+                        </div>
+                        <ul class="measure-list">
+                `;
+                for (const m of data.measures.slice(0, 5)) { // afficher max 5 mesures par thème
+                    html += `<li><span class="measure-title">${m.titre}</span><span class="measure-amount">${formatBillions(m.amount)}</span></li>`;
+                }
+                if (data.measures.length > 5) {
+                    html += `<li class="no-data">+ ${data.measures.length - 5} autre(s) mesure(s)</li>`;
+                }
+                html += `</ul></div>`;
+            }
+
+            html += `</div><hr><h3>🔍 Liste de toutes les mesures avec budget identifié</h3><div class="category-grid">`;
+            // Optionnel : afficher toutes les mesures avec budget (on peut les mettre dans une liste simple)
+            html += `<ul style="column-count: 2; list-style: none;">`;
+            measuresWithBudget.sort((a,b) => b.amount - a.amount).forEach(m => {
+                html += `<li style="margin-bottom: 0.5rem;"><strong>${m.titre}</strong> (${getCatLabel(m.categorie)}) : ${formatBillions(m.amount)}</li>`;
+            });
+            html += `</ul>`;
+
+            html += `<p class="warning" style="margin-top: 2rem;">📌 <strong>Limites de l’extraction</strong> : Seuls les montants explicitement indiqués comme "X milliards/millions par an" ont été pris en compte. De nombreuses mesures ont des financements intégrés dans des plans globaux (ex: "inclus dans le plan rénovation") et ne sont pas comptabilisées ici. Ce tableau de bord est une <strong>expérience de visualisation</strong>, pas une analyse budgétaire définitive.</p>`;
+
+            document.getElementById('budgetContent').innerHTML = html;
+        }
+    </script>
+</body>
+</html>
