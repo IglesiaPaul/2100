@@ -3,49 +3,166 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>À propos - L'Avenir en commun</title>
+    <title>À propos · SOLARPUNK/France2100</title>
     <link rel="stylesheet" href="css/style.css">
     <style>
+        body {
+            background: #f5f7fa;
+        }
         .about-container {
-            max-width: 800px;
+            max-width: 1000px;
             margin: 2rem auto;
+            padding: 1rem;
+        }
+        .hero-about {
+            background: linear-gradient(135deg, #1a5d8f, #0e3a5a);
+            color: white;
             padding: 2rem;
+            border-radius: 24px;
+            margin-bottom: 2rem;
+            text-align: center;
+        }
+        .hero-about h1 {
+            margin: 0 0 0.5rem;
+            font-size: 1.8rem;
+        }
+        .hero-about p {
+            margin: 0;
+            opacity: 0.9;
+        }
+        .section-title {
+            font-size: 1.5rem;
+            margin: 2rem 0 1rem;
+            border-left: 5px solid #2b9e4a;
+            padding-left: 1rem;
+        }
+        .card-about {
             background: white;
             border-radius: 20px;
-            box-shadow: 0 4px 20px rgba(0,0,0,0.05);
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
         }
-        .about-container h1 {
-            color: var(--primary-color, #2b9e4a);
+        .card-about h3 {
+            margin-top: 0;
+            color: #1a5d8f;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
         }
-        .back-link {
-            display: inline-block;
-            margin-top: 2rem;
-            color: #2b9e4a;
+        .contact-email {
+            background: #e8f5e9;
+            border-radius: 40px;
+            padding: 0.5rem 1rem;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 1rem;
+            margin-top: 0.5rem;
+        }
+        .contact-email a {
+            color: #1a5d8f;
             text-decoration: none;
+            font-weight: bold;
+        }
+        .contact-email a:hover {
+            text-decoration: underline;
+        }
+        .tech-list {
+            list-style: none;
+            padding: 0;
+            margin: 1rem 0 0;
+        }
+        .tech-list li {
+            display: inline-block;
+            background: #e9ecef;
+            padding: 0.3rem 0.8rem;
+            border-radius: 20px;
+            margin: 0.2rem;
+            font-size: 0.85rem;
+        }
+        footer {
+            text-align: center;
+            margin-top: 2rem;
+            padding: 1rem;
+            color: #6c757d;
+            border-top: 1px solid #dee2e6;
+        }
+        .badge-version {
+            background: #ffd966;
+            color: #1a5d8f;
+            padding: 0.2rem 0.6rem;
+            border-radius: 20px;
+            font-size: 0.7rem;
+            margin-left: 0.5rem;
         }
     </style>
 </head>
 <body>
-     <script src="js/nav.js"></script>
+    <script src="js/nav.js"></script>
 
     <div class="about-container">
-        <h1>📖 À propos de ce site</h1>
-        <p>Ce site est une <strong>vulgarisation indépendante</strong> du programme <strong>« L'Avenir en commun »</strong> de l’Union Populaire (La France Insoumise).</p>
-        <p>Les mesures présentées sont extraites et synthétisées à partir des documents officiels disponibles sur le site <a href="https://lafranceinsoumise.fr/le-programme/" target="_blank">lafranceinsoumise.fr</a> (PDF, livrets, fiches).</p>
-        <p>Nous avons fait notre maximum pour retranscrire fidèlement les 1000+ propositions, mais <strong>certaines informations peuvent être incomplètes ou contenir des erreurs</strong> involontaires. En cas de doute, référez-vous toujours aux sources officielles.</p>
-        <p>Le code source de ce site est ouvert et les contributions sont les bienvenues pour améliorer la précision des données.</p>
-        <p><strong>Contact :</strong> Pour toute correction ou suggestion, merci de nous écrire via le formulaire de contact (à venir).</p>
-        <a href="index.html" class="back-link">← Retour à l’accueil</a>
+        <div class="hero-about">
+            <h1>🌱 SOLARPUNK/France2100</h1>
+            <p>Vulgarisation, confrontation citoyenne et laboratoire d’expérimentation politique</p>
+        </div>
+
+        <div class="card-about">
+            <h3>📖 Notre mission</h3>
+            <p>Ce site est un <strong>outil citoyen indépendant</strong> qui vise à rendre accessible le programme politique « L’Avenir en commun » (France insoumise) et à le confronter à des données objectives : rapports du Haut Conseil pour le Climat, analyses budgétaires, indicateurs sociaux et environnementaux.</p>
+            <p>Nous transformons 1000 mesures en fiches lisibles, classées par thème, et proposons des expérimentations (chatbot, quizz, comparateurs) pour éclairer le débat public.</p>
+        </div>
+
+        <div class="card-about">
+            <h3>🗂️ Origine des données</h3>
+            <p>Les mesures sont extraites du programme officiel <strong>« L’Avenir en commun »</strong> publié par La France insoumise lors des élections législatives de 2024, ainsi que des documents complémentaires (chartes thématiques, propositions de loi).</p>
+            <p>Les résumés, classements et liens entre mesures sont produits par l’équipe du projet. Les rapports de référence (HCC, Cour des comptes, etc.) sont cités intégralement.</p>
+            <p><strong>Caractère non officiel</strong> : ce site n’est pas publié par La France insoumise. Il s’agit d’une initiative citoyenne indépendante.</p>
+        </div>
+
+        <div class="card-about">
+            <h3>🔬 Le Lab – Expérimentations</h3>
+            <p>Le laboratoire rassemble des outils interactifs pour aller plus loin :</p>
+            <ul style="margin-top: 0.5rem; padding-left: 1.2rem;">
+                <li>💰 <strong>Analyse budgétaire</strong> : extraction automatique des montants dans les mesures.</li>
+                <li>🌡️ <strong>Confrontation HCC</strong> : comparaison avec les 32 recommandations climat du Haut Conseil.</li>
+                <li>🤖 <strong>Chatbot programmatique</strong> : répondez à vos questions sur le programme.</li>
+                <li>📝 <strong>Quizz participatif</strong> : testez vos connaissances.</li>
+            </ul>
+            <p>Ces modules sont expérimentaux et évoluent en continu.</p>
+        </div>
+
+        <div class="card-about">
+            <h3>📬 Contact & participation</h3>
+            <p>Une idée, une correction, un nouveau comparateur à intégrer ? Écrivez‑nous :</p>
+            <div class="contact-email">
+                ✉️ <a href="mailto:me@pauliglesia.com">me@pauliglesia.com</a>
+            </div>
+            <p style="margin-top: 1rem; font-size: 0.85rem;">Le projet est open source et accueille les contributions techniques, éditoriales ou graphiques.</p>
+        </div>
+
+        <div class="card-about">
+            <h3>⚙️ Technologies & crédits</h3>
+            <ul class="tech-list">
+                <li>HTML5 / CSS3</li>
+                <li>JavaScript (vanilla)</li>
+                <li>GitHub Pages</li>
+                <li>Données au format JSON / JS</li>
+                <li>HCC rapport 2026</li>
+                <li>Programme « L’Avenir en commun »</li>
+            </ul>
+            <p style="margin-top: 1rem; font-size: 0.85rem;">Design et développement : initiative citoyenne — 2025‑2026.</p>
+        </div>
+
+        <div class="card-about">
+            <h3>📜 Licence et réutilisation</h3>
+            <p>Les contenus (textes des mesures) sont issus d’un programme politique librement diffusable. Les résumés et codes sources sont disponibles sous licence <strong>MIT</strong>. Vous pouvez réutiliser, modifier et partager à condition de citer l’origine.</p>
+            <p><span class="badge-version">Version 3.0 – “Solarpunk”</span></p>
+        </div>
     </div>
 
-    <div class="about-section">
-    <h3>📖 Programme d'origine</h3>
-    <p>Ce site est une reprise pédagogique et interactive du programme <strong>« L'Avenir en commun »</strong>.</p>
-    <p>Pour consulter le texte officiel complet : <a href="https://lafranceinsoumise.fr/le-programme/" target="_blank" rel="noopener">👉 L'Avenir en commun – La France insoumise</a></p>
-</div>
-
-    <footer class="footer" style="margin-top: 2rem;">
-        <p>Site indépendant - Données extraites du programme officiel - Licence libre</p>
+    <footer>
+        ⚡ Projet citoyen – Données et analyses à caractère expérimental.
     </footer>
 </body>
 </html>
