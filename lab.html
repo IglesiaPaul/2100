@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lab · Solarpunk/France2100</title>
+    <link rel="stylesheet" href="css/style.css">
+    <style>
+        body {
+            background: #f5f7fa;
+        }
+        .lab-dashboard {
+            max-width: 1200px;
+            margin: 2rem auto;
+            padding: 1rem;
+        }
+        .hero {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+        .hero h1 {
+            font-size: 2rem;
+            color: #1a5d8f;
+            margin-bottom: 0.5rem;
+        }
+        .hero p {
+            color: #4a5568;
+        }
+        .section-title {
+            font-size: 1.5rem;
+            margin: 2rem 0 1rem;
+            border-left: 5px solid #2b9e4a;
+            padding-left: 1rem;
+        }
+        .cards-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+        .tool-card {
+            background: white;
+            border-radius: 20px;
+            padding: 1.5rem;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+            transition: transform 0.2s, box-shadow 0.2s;
+            text-decoration: none;
+            color: inherit;
+            display: block;
+        }
+        .tool-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 12px 24px rgba(0,0,0,0.12);
+        }
+        .tool-icon {
+            font-size: 2.5rem;
+            margin-bottom: 0.75rem;
+        }
+        .tool-title {
+            font-size: 1.3rem;
+            font-weight: bold;
+            margin-bottom: 0.5rem;
+            color: #1a5d8f;
+        }
+        .tool-desc {
+            color: #4a5568;
+            font-size: 0.9rem;
+            line-height: 1.4;
+        }
+        .badge-new {
+            background: #2b9e4a;
+            color: white;
+            font-size: 0.7rem;
+            padding: 0.2rem 0.6rem;
+            border-radius: 20px;
+            display: inline-block;
+            margin-top: 0.75rem;
+        }
+        .coming-soon {
+            opacity: 0.7;
+            filter: grayscale(0.1);
+        }
+        footer {
+            text-align: center;
+            margin-top: 3rem;
+            padding: 1rem;
+            color: #6c757d;
+            border-top: 1px solid #dee2e6;
+        }
+    </style>
+</head>
+<body>
+    <script src="js/nav.js"></script>
+
+    <div class="lab-dashboard">
+        <div class="hero">
+            <h1>🔬 Laboratoire d’analyse citoyenne</h1>
+            <p>Expérimentez, comparez, vulgarisez. Des outils pour explorer le programme et le confronter aux rapports officiels.</p>
+        </div>
+
+        <div class="section-title">
+            🧰 Outils interactifs
+        </div>
+        <div class="cards-grid">
+            <a href="chatbot.html" class="tool-card">
+                <div class="tool-icon">🤖</div>
+                <div class="tool-title">Chatbot programmatique</div>
+                <div class="tool-desc">Posez vos questions sur les mesures, obtenez des explications simples et des citations.</div>
+            </a>
+            <a href="quizz.html" class="tool-card">
+                <div class="tool-icon">📝</div>
+                <div class="tool-title">Quizz participatif</div>
+                <div class="tool-desc">Testez vos connaissances sur le programme et ses impacts.</div>
+            </a>
+            <a href="budget.html" class="tool-card">
+                <div class="tool-icon">💰</div>
+                <div class="tool-title">Analyse budgétaire</div>
+                <div class="tool-desc">Visualisation automatique des montants et financements des mesures.</div>
+                <span class="badge-new">Expérimental</span>
+            </a>
+        </div>
+
+        <div class="section-title">
+            📊 Comparateurs de politiques publiques
+        </div>
+        <div class="cards-grid">
+            <a href="lab-hcc.html" class="tool-card">
+                <div class="tool-icon">🌡️</div>
+                <div class="tool-title">Haut Conseil pour le Climat (HCC)</div>
+                <div class="tool-desc">Confrontation du programme avec les 32 recommandations du rapport 2026 sur les territoires et le climat.</div>
+                <span class="badge-new">Disponible</span>
+            </a>
+            <div class="tool-card coming-soon">
+                <div class="tool-icon">🌍</div>
+                <div class="tool-title">PNACC 3 – Adaptation</div>
+                <div class="tool-desc">Comparaison avec le 3ᵉ plan national d’adaptation au changement climatique.</div>
+                <span class="badge-new" style="background: #6c757d;">À venir</span>
+            </div>
+            <div class="tool-card coming-soon">
+                <div class="tool-icon">⚡</div>
+                <div class="tool-title">SNBC 3 – Neutralité carbone</div>
+                <div class="tool-desc">Analyse croisée avec la stratégie nationale bas‑carbone.</div>
+                <span class="badge-new" style="background: #6c757d;">À venir</span>
+            </div>
+            <div class="tool-card coming-soon">
+                <div class="tool-icon">🏛️</div>
+                <div class="tool-title">Cour des comptes</div>
+                <div class="tool-desc">Évaluation des finances publiques et de l’efficacité des mesures.</div>
+                <span class="badge-new" style="background: #6c757d;">À venir</span>
+            </div>
+        </div>
+
+        <footer>
+            ⚡ Laboratoire citoyen – Approche expérimentale et pédagogique. Les comparaisons sont générées automatiquement et ne remplacent pas une analyse approfondie.
+        </footer>
+    </div>
+</body>
+</html>
