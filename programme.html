@@ -371,7 +371,7 @@
                             <div class="measure-title">${escapeHtml(m.titre)}</div>
                             <div class="measure-category">${catLabel.emoji} ${catLabel.name}</div>
                             <div class="measure-summary">${escapeHtml(m.resume || 'Aucun résumé disponible.')}</div>
-                            <a href="${m.url || '#'}" class="measure-link">🔍 Lire la fiche →</a>
+                            <a href="mesure.html?id=${m.id}" class="measure-link">🔍 Lire la fiche →</a>
                         </div>
                     `;
                 }
