@@ -3,7 +3,7 @@
     const navHtml = `
         <nav class="navbar">
             <div class="nav-container">
-                <a href="index.html" class="logo">🌱 L'Avenir en commun</a>
+                <a href="index.html" class="logo">🌱 SOLARPUNK/France2100</a>
                 <div class="nav-links">
                     <a href="index.html">Accueil</a>
                     <a href="index.html#allMeasuresLink">Toutes les mesures</a>
