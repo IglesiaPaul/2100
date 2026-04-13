@@ -1,63 +1,54 @@
 const pnaccMeasures = [
-  {
-    id: 1,
-    title: "Renforcer le fonds Barnier pour accélérer les démarches de prévention des territoires et mieux protéger la population",
-    description: "Accroissement du fonds Barnier à 300 M€/an pour cofinancer des projets de prévention des collectivités (bassin de la Bassée, protection de Nîmes, déménagement de Miquelon...).",
-    secteurs: ["prévention", "inondation", "submersion", "financement", "collectivités"]
-  },
-  {
-    id: 2,
-    title: "Maintenir la possibilité pour chacun de s’assurer contre les risques naturels en modernisant notre système assurantiel",
-    description: "Créer un observatoire de l’assurance des catastrophes naturelles, préserver la mutualisation, renforcer la prévention et la sensibilisation.",
-    secteurs: ["assurance", "catastrophe naturelle", "mutualisation", "prévention"]
-  },
-  {
-    id: 3,
-    title: "Protéger la population des inondations en adaptant la politique de prévention des risques",
-    description: "Adapter les référentiels de prévention à la TRACC, étendre Vigicrues, promouvoir les PAPI, développer la culture du risque.",
-    secteurs: ["inondation", "prévention", "vigicrues", "PAPI", "risque"]
-  },
-  {
-    id: 4,
-    title: "Protéger la population des conséquences du recul du trait de côte en repensant l’aménagement des territoires exposés",
-    description: "Actualiser la stratégie nationale, accompagner les élus, financer la recomposition spatiale, adapter aux Outre‑mer.",
-    secteurs: ["trait de côte", "érosion", "littoral", "aménagement", "relocalisation"]
-  },
-  {
-    id: 5,
-    title: "Protéger la population des désordres sur les bâtiments liés au retrait-gonflement des argiles",
-    description: "Améliorer la connaissance, agir sur le neuf et l’existant, adapter l’indemnisation, informer les élus et citoyens.",
-    secteurs: ["retrait-gonflement", "argiles", "bâtiment", "sécheresse"]
-  },
-  {
-    id: 6,
-    title: "Protéger la population des risques naturels en montagne, notamment des risques glaciaires et périglaciaires",
-    description: "Améliorer les connaissances, identifier les sites à risque, accompagner les collectivités, développer la culture du risque.",
-    secteurs: ["montagne", "glaciaire", "periglaciaire", "avalanche", "risque"]
-  },
-  {
-    id: 7,
-    title: "Se préparer à l’augmentation attendue des incendies de forêt et de végétation",
-    description: "Intégrer le CC dans les cartographies, élaborer la stratégie nationale DFCI, réviser les OLD, financer les équipements.",
-    secteurs: ["incendie", "forêt", "végétation", "DFCI", "OLD"]
-  },
-  {
-    id: 8,
-    title: "Préparer la Sécurité civile à l’augmentation des risques",
-    description: "Renforcer les moyens d’action (pompage, sauvetage, lutte incendie), généraliser les PCS/PICS.",
-    secteurs: ["sécurité civile", "crise", "pompier", "PCS"]
-  },
-  {
-    id: 9,
-    title: "Adapter les logements au risque de fortes chaleurs",
-    description: "Améliorer la connaissance, rénover les logements avec confort d’été, adapter la réglementation, sensibiliser.",
-    secteurs: ["logement", "chaleur", "canicule", "confort d'été", "rénovation"]
-  },
-  {
-    id: 10,
-    title: "Déployer à grande échelle les technologies de froid renouvelable",
-    description: "Favoriser les réseaux de froid en zones denses, soutenir l’innovation pour une climatisation à faible impact.",
-    secteurs: ["froid", "réseau de froid", "climatisation", "efficacité énergétique"]
-  }
-  // ... les 42 autres mesures suivent, avec la même structure
+  { id:1, title:"Renforcer le fonds Barnier pour accélérer les démarches de prévention des territoires et mieux protéger la population", description:"Accroissement du fonds Barnier à 300 M€/an pour cofinancer des projets de prévention des collectivités (bassin de la Bassée, protection de Nîmes, déménagement de Miquelon...)", secteurs:["prévention","inondation","submersion","financement","collectivités"] },
+  { id:2, title:"Maintenir la possibilité pour chacun de s’assurer contre les risques naturels en modernisant notre système assurantiel", description:"Créer un observatoire de l’assurance des catastrophes naturelles, préserver la mutualisation, renforcer la prévention et la sensibilisation.", secteurs:["assurance","catastrophe naturelle","mutualisation","prévention"] },
+  { id:3, title:"Protéger la population des inondations en adaptant la politique de prévention des risques", description:"Adapter les référentiels de prévention à la TRACC, étendre Vigicrues, promouvoir les PAPI, développer la culture du risque.", secteurs:["inondation","prévention","vigicrues","PAPI","risque"] },
+  { id:4, title:"Protéger la population des conséquences du recul du trait de côte en repensant l’aménagement des territoires exposés", description:"Actualiser la stratégie nationale, accompagner les élus, financer la recomposition spatiale, adapter aux Outre‑mer.", secteurs:["trait de côte","érosion","littoral","aménagement","relocalisation"] },
+  { id:5, title:"Protéger la population des désordres sur les bâtiments liés au retrait-gonflement des argiles", description:"Améliorer la connaissance, agir sur le neuf et l’existant, adapter l’indemnisation, informer les élus et citoyens.", secteurs:["retrait-gonflement","argiles","bâtiment","sécheresse"] },
+  { id:6, title:"Protéger la population des risques naturels en montagne, notamment des risques glaciaires et périglaciaires", description:"Améliorer les connaissances, identifier les sites à risque, accompagner les collectivités, développer la culture du risque.", secteurs:["montagne","glaciaire","periglaciaire","avalanche","risque"] },
+  { id:7, title:"Se préparer à l’augmentation attendue des incendies de forêt et de végétation", description:"Intégrer le CC dans les cartographies, élaborer la stratégie nationale DFCI, réviser les OLD, financer les équipements.", secteurs:["incendie","forêt","végétation","DFCI","OLD"] },
+  { id:8, title:"Préparer la Sécurité civile à l’augmentation des risques", description:"Renforcer les moyens d’action (pompage, sauvetage, lutte incendie), généraliser les PCS/PICS.", secteurs:["sécurité civile","crise","pompier","PCS"] },
+  { id:9, title:"Adapter les logements au risque de fortes chaleurs", description:"Améliorer la connaissance, rénover les logements avec confort d’été, adapter la réglementation, sensibiliser.", secteurs:["logement","chaleur","canicule","confort d'été","rénovation"] },
+  { id:10, title:"Déployer à grande échelle les technologies de froid renouvelable", description:"Favoriser les réseaux de froid en zones denses, soutenir l’innovation pour une climatisation à faible impact.", secteurs:["froid","réseau de froid","climatisation","efficacité énergétique"] },
+  { id:11, title:"Adapter les conditions de travail au changement climatique en renforçant les obligations de prévention des employeurs", description:"Renforcer la surveillance, créer un pouvoir d’arrêt de l’inspection du travail, développer des EPI adaptés, étendre le régime BTP‑intempéries.", secteurs:["travail","chaleur","canicule","prévention","employeur"] },
+  { id:12, title:"Un Etat exemplaire pour intégrer l’adaptation au changement climatique dans le quotidien de travail des agents publics", description:"Intégrer le confort d’été dans les rénovations des bâtiments publics, adapter l’organisation du travail.", secteurs:["État","bâtiment public","confort d'été","agent public"] },
+  { id:13, title:"Renaturer les villes pour améliorer leur résilience face au changement climatique", description:"Cartographier les îlots de chaleur, planifier la renaturation, financer des opérations, former les filières.", secteurs:["renaturation","ville","îlot de chaleur","végétalisation","désimperméabilisation"] },
+  { id:14, title:"Protéger les populations précaires des fortes chaleurs", description:"Diagnostiquer les hébergements, financer les rénovations, accompagner les acteurs sociaux.", secteurs:["précarité","chaleur","hébergement","solidarité"] },
+  { id:15, title:"Protéger les personnels pénitentiaires et les personnes détenues des fortes chaleurs", description:"Étude de vulnérabilité des établissements pénitentiaires, plan d’adaptation, intégration du confort d’été.", secteurs:["prison","détention","chaleur","adaptation"] },
+  { id:16, title:"Développer l’approche « Une seule santé » pour la prévention des risques sanitaires liés au changement climatique", description:"Former les professionnels, sensibiliser, lutter contre les espèces nuisibles, renforcer la surveillance des zoonoses.", secteurs:["santé","One Health","zoonose","maladie vectorielle"] },
+  { id:17, title:"Renforcer la surveillance et les connaissances des impacts du changement climatique sur la santé", description:"Cartographie des risques sanitaires, appels à projets, partage international.", secteurs:["santé","surveillance","risque sanitaire","recherche"] },
+  { id:18, title:"Maintenir la qualité de l’air extérieur lors des vagues de chaleur", description:"Communiquer sur les conséquences du CC sur l’air, expérimenter des mesures préfectorales lors des épisodes de chaleur.", secteurs:["qualité de l'air","ozone","canicule","pollution"] },
+  { id:19, title:"Intégrer les enjeux de l’adaptation au changement climatique dans la prévention des risques technologiques", description:"Mettre à jour les études de dangers des ICPE, recenser les sites côtiers pollués.", secteurs:["risque technologique","ICPE","Seveso","Natech"] },
+  { id:20, title:"Déployer les solutions fondées sur la nature pour l’adaptation", description:"Comparer SFN et solutions grises, structurer les filières, former, financer.", secteurs:["solution fondée sur la nature","biodiversité","écosystème","génie écologique"] },
+  { id:21, title:"Préserver la ressource en eau face au changement climatique : renforcer le Plan Eau", description:"Planifier la gestion de l’eau avec la TRACC, surveiller les prélèvements, désimperméabiliser, accompagner les usagers.", secteurs:["eau","ressource en eau","sécheresse","Plan Eau","sobriété"] },
+  { id:22, title:"Mettre à la disposition des collectivités les informations nécessaires pour adapter leur territoire au changement climatique", description:"Développer les services climatiques (DRIAS, Climadiag), former les élus, labelliser les bureaux d’études, guide mal‑adaptation.", secteurs:["collectivité","donnée climatique","formation","vulnérabilité"] },
+  { id:23, title:"Intégrer progressivement la TRACC dans tous les documents de planification publique", description:"Inscrire la TRACC dans le code de l’environnement, modifier les décrets PCAET, proposer un « patch +4°C ».", secteurs:["TRACC","planification","PCAET","SRADDET","code de l'environnement"] },
+  { id:24, title:"Intégrer les enjeux de l’adaptation au changement climatique dans toutes les normes techniques", description:"Panorama des normes à réviser, liste de critères, adaptation progressive.", secteurs:["norme technique","référentiel","bâtiment","transport","énergie"] },
+  { id:25, title:"Pérenniser la « Mission Adaptation », offre unifiée d’ingénierie de l’Etat pour l’adaptation à destination des collectivités locales", description:"Créer une offre de service en cinq briques (diagnostic, formation, stratégie, fléchage, AMO), labelliser les GREC, nommer un référent adaptation en préfecture.", secteurs:["ingénierie","collectivité","accompagnement","Mission Adaptation"] },
+  { id:26, title:"Mieux évaluer les actions d’adaptation menées sur le territoire", description:"Définir un socle d’indicateurs, étudier un rapportage obligatoire, étendre l’annexe environnementale à l’adaptation.", secteurs:["évaluation","indicateur","rapportage","annexe environnementale"] },
+  { id:27, title:"Mieux prendre en compte l’adaptation au changement climatique dans les financements publics en faveur de la transition écologique dès 2024", description:"Renforcer les CRTE pour l’adaptation, prioriser l’axe adaptation du Fonds vert, conditionnalité climat.", secteurs:["financement","CRTE","Fonds vert","conditionnalité"] },
+  { id:28, title:"Assurer la continuité de l’enseignement scolaire et de l’accueil des jeunes enfants face au réchauffement climatique", description:"Améliorer le confort d’été des écoles, adapter les rythmes scolaires, recenser les établissements menacés.", secteurs:["école","éducation","chaleur","confort d'été","continuité pédagogique"] },
+  { id:29, title:"Accompagner les conséquences du changement climatique sur notre système de santé", description:"Étude prospective sur la vulnérabilité du système de santé, plans d’adaptation dans les établissements.", secteurs:["santé","hôpital","offre de soin","vulnérabilité"] },
+  { id:30, title:"Assurer la résilience des transports et des mobilités", description:"Plans d’adaptation des opérateurs (routes, fer, ports, aérien), adaptation des services aux fortes chaleurs, mise à jour des référentiels techniques.", secteurs:["transport","mobilité","infrastructure","chaleur","résilience"] },
+  { id:31, title:"Assurer la résilience du système énergétique", description:"Études de vulnérabilité des réseaux pétrolier, gazier, électrique, nucléaire, hydroélectricité, adaptation des normes.", secteurs:["énergie","réseau","électricité","nucléaire","hydroélectricité"] },
+  { id:32, title:"Assurer la résilience des services de communications électroniques", description:"Stratégie de long terme pour les réseaux de télécommunication face aux aléas climatiques.", secteurs:["télécommunication","réseau","crise","résilience"] },
+  { id:33, title:"Mobiliser tous les secteurs économiques : intégrer l’adaptation au changement climatique dans les stratégies des entreprises", description:"Inciter les entreprises à élaborer des plans d’adaptation, sensibiliser via CCI/CMA, intégrer l’adaptation dans les missions des DREETS.", secteurs:["entreprise","secteur économique","plan d'adaptation","stratégie"] },
+  { id:34, title:"Intégrer les enjeux de l’adaptation dans les dispositifs d’aide aux entreprises", description:"Conditionner les aides publiques à la prise en compte du climat futur, soutenir l’innovation pour l’adaptation, adapter l’activité partielle.", secteurs:["aide publique","entreprise","innovation","activité partielle"] },
+  { id:35, title:"Accompagner l’adaptation du tourisme", description:"État de l’art, plans d’adaptation pour la montagne et le littoral, observatoire des vulnérabilités, conditionner les soutiens publics.", secteurs:["tourisme","montagne","littoral","adaptation","observatoire"] },
+  { id:36, title:"Développer les connaissances, former et anticiper les conséquences du changement climatique dans le secteur agricole et l’industrie agro-alimentaire", description:"Étude prospective agricole 2050, plan semences, formations aux transitions agro‑écologique.", secteurs:["agriculture","agroalimentaire","connaissance","formation","recherche"] },
+  { id:37, title:"Accompagner les exploitations agricoles, les filières et l’industrie agro-alimentaire face aux aléas climatiques et engager la transition vers des modèles résilients et bas carbone", description:"Diagnostic modulaire, révision du PSN, pacte haie, PSE, plans de souveraineté, bien‑être animal, adaptation à la raréfaction de l’eau.", secteurs:["agriculture","exploitation","filière","résilience","eau","bien-être animal"] },
+  { id:38, title:"Assurer la résilience des forêts, des services associés et de l'économie de la filière bois", description:"Stratégie nationale d’adaptation des forêts, renouvellement forestier, cartographie des vulnérabilités, ressources génétiques, adaptation de l’aval.", secteurs:["forêt","bois","résilience","renouvellement","filière bois"] },
+  { id:39, title:"Accompagner la pêche et l’aquaculture marine face au changement climatique", description:"Renforcer les connaissances, adapter la gestion des stocks, soutenir la diversification, protéger les zones fonctionnelles.", secteurs:["pêche","aquaculture","mer","stocks halieutiques","adaptation"] },
+  { id:40, title:"Mieux évaluer les actions d’adaptation mises en œuvre par les entreprises", description:"Intégrer la TRACC dans l’évaluation environnementale, bilan bisannuel du reporting extra‑financier (CSRD).", secteurs:["évaluation","entreprise","reporting","CSRD","étude d'impact"] },
+  { id:41, title:"Développer les outils et informations nécessaires aux entreprises pour s’adapter au changement climatique", description:"Données climatiques dans l’espace dirigeant de la Banque de France, guide générique, guides sectoriels, catalogue d’outils.", secteurs:["entreprise","outil","donnée climatique","guide","Banque de France"] },
+  { id:42, title:"Mobiliser les acteurs financiers pour le financement privé de l’adaptation au changement climatique", description:"Garanties vertes Bpifrance, obligations transition, mission sur le rôle des banques dans la prévention.", secteurs:["financement","banque","assurance","garantie","obligation transition"] },
+  { id:43, title:"Favoriser l’adaptation et la résilience des milieux naturels et des espèces au changement climatique", description:"Diagnostic de vulnérabilité des espèces protégées, restauration des zones humides, aires protégées laboratoires, inventaires ADN.", secteurs:["biodiversité","milieu naturel","espèce","aire protégée","restauration"] },
+  { id:44, title:"Protéger notre patrimoine naturel et culturel des impacts du changement climatique", description:"Cartographie des risques pour le patrimoine culturel, plans de sauvegarde, formation des professionnels, adaptation des normes de conservation.", secteurs:["patrimoine","culture","monument","collection","conservation"] },
+  { id:45, title:"Mobiliser la commande publique au service de l’adaptation au changement climatique", description:"Intégrer un « réflexe adaptation » dans les achats de l’État, portail des achats durables, plan national des achats durables.", secteurs:["commande publique","achat","État","clause environnementale"] },
+  { id:46, title:"Mobiliser la recherche et les connaissances scientifiques sur le changement climatique et les solutions pour s’y adapter", description:"Panorama de la recherche, identification de thématiques à développer, thèses COFRA, colloques, accompagnement des villes via POPSU.", secteurs:["recherche","science","connaissance","innovation","recherche-action"] },
+  { id:47, title:"Renforcer la gouvernance de l’adaptation au changement climatique", description:"Renforcer les liens entre CNTE, CESE et instances sectorielles pour le suivi du PNACC.", secteurs:["gouvernance","CNTE","CESE","suivi","concertation"] },
+  { id:48, title:"Mobiliser les citoyens dans des missions liées à l’adaptation au changement climatique et la prévention des risques", description:"Service civique écologique pour la résilience, inscription des vulnérables sur les registres canicule, réserves communales de sécurité civile.", secteurs:["citoyen","service civique","bénévolat","prévention","registre canicule"] },
+  { id:49, title:"Poursuivre et renforcer l’éducation au climat dans l’enseignement scolaire et dans les cursus de l’enseignement supérieur", description:"Outils pédagogiques, formation des enseignants, engagement des élèves, formation des étudiants de 1er cycle, palmarès étudiant.", secteurs:["éducation","école","université","climat","formation"] },
+  { id:50, title:"Former tous les agents publics aux enjeux de l’adaptation et mobiliser les compétences de l’Etat", description:"Identifier les compétences nécessaires au sein des services de l’État, plan de montée en compétence.", secteurs:["formation","agent public","État","compétence"] },
+  { id:51, title:"Mobiliser les solutions d’intelligence artificielle au service de l’adaptation au changement climatique", description:"Appel à projets démonstrateurs IA, réplication, acculturation des agents, recherche en IA pour le climat.", secteurs:["intelligence artificielle","IA","donnée","prévision","alerte"] },
+  { id:52, title:"Mobiliser les Français sur l’importance de l’adaptation et ses bénéfices à court et moyen termes", description:"Plan de communication grand public, semaine de l’adaptation, « Green Team » pour un récit positif.", secteurs:["communication","sensibilisation","grand public","récit","mobilisation"] }
 ];
