@@ -2,371 +2,279 @@
 <html lang="fr">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-    <title>L'Avenir en commun - Comprendre le programme</title>
-    <meta name="description" content="Découvrez et comprenez facilement les 1000+ propositions du programme L'Avenir en commun. Recherche par thème, public ou mot-clé.">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SOLARPUNK/France2100 · Vulgarisation & comparateur citoyen</title>
     <link rel="stylesheet" href="css/style.css">
     <style>
-        /* Suppression des éventuels emojis générés par le CSS existant */
-        .category-icon::before,
-        .category-card::before {
-            content: none !important;
+        /* Styles spécifiques à la page d'accueil */
+        .hero {
+            background: linear-gradient(135deg, #1a5d8f 0%, #0e3a5a 100%);
+            color: white;
+            padding: 3rem 1rem;
+            text-align: center;
+            margin-bottom: 2rem;
         }
-        .filter-buttons { display: flex; flex-wrap: wrap; gap: 0.5rem; margin-bottom: 1.5rem; }
-        .filter-btn { margin: 0; }
-        .results-area { display: none; }
-        .results-area.show { display: block; }
-        .stats { margin-top: 1rem; font-style: italic; text-align: center; }
-        .category-count {
-            display: inline-block;
-            margin-top: 0.6rem;
-            font-size: 0.7rem;
-            font-weight: normal;
-            color: #2b9e4a;
-            background: #e8f5e9;
+        .hero h1 {
+            font-size: 2.2rem;
+            margin-bottom: 1rem;
+        }
+        .hero p {
+            font-size: 1.1rem;
+            max-width: 800px;
+            margin: 0 auto;
+            opacity: 0.9;
+        }
+        .section-title {
+            font-size: 1.8rem;
+            margin: 2rem 0 1rem;
+            border-left: 5px solid #2b9e4a;
+            padding-left: 1rem;
+        }
+        .cards-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 1.5rem;
+            margin: 1.5rem 0;
+        }
+        .card {
+            background: white;
+            border-radius: 20px;
+            padding: 1.5rem;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+            transition: transform 0.2s, box-shadow 0.2s;
+            text-decoration: none;
+            color: inherit;
+            display: block;
+        }
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 12px 24px rgba(0,0,0,0.12);
+        }
+        .card-icon {
+            font-size: 2rem;
+            margin-bottom: 0.75rem;
+        }
+        .card-title {
+            font-size: 1.3rem;
+            font-weight: bold;
+            margin-bottom: 0.5rem;
+            color: #1a5d8f;
+        }
+        .card-desc {
+            color: #4a5568;
+            line-height: 1.4;
+        }
+        .shuffler {
+            background: #f8f9fa;
+            border-radius: 20px;
+            padding: 1.5rem;
+            text-align: center;
+            margin: 1.5rem 0;
+        }
+        .shuffler button {
+            background: #2b9e4a;
+            color: white;
+            border: none;
+            padding: 0.75rem 1.5rem;
+            font-size: 1rem;
+            border-radius: 40px;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+        .shuffler button:hover {
+            background: #1e6b34;
+        }
+        .random-measure {
+            margin-top: 1rem;
+            padding: 1rem;
+            background: white;
+            border-radius: 16px;
+            text-align: left;
+            display: none;
+        }
+        .random-measure h4 {
+            color: #1a5d8f;
+            margin-bottom: 0.5rem;
+        }
+        .badge {
+            background: #e9ecef;
             padding: 0.2rem 0.6rem;
             border-radius: 20px;
+            font-size: 0.8rem;
+            display: inline-block;
+            margin-top: 0.5rem;
         }
-        .category-card h3 {
-            margin: 0 0 0.5rem 0;
+        footer {
+            text-align: center;
+            margin-top: 3rem;
+            padding: 1rem;
+            color: #6c757d;
+            border-top: 1px solid #dee2e6;
+        }
+        .two-col-links {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+            flex-wrap: wrap;
+            margin: 1rem 0;
+        }
+        .btn {
+            background: #1a5d8f;
+            color: white;
+            padding: 0.6rem 1.2rem;
+            border-radius: 40px;
+            text-decoration: none;
+            transition: background 0.2s;
+            display: inline-block;
+        }
+        .btn-outline {
+            background: transparent;
+            border: 2px solid #1a5d8f;
+            color: #1a5d8f;
+        }
+        .btn-outline:hover {
+            background: #1a5d8f;
+            color: white;
+        }
+        .btn:hover {
+            background: #0e3a5a;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 1rem;
         }
     </style>
 </head>
 <body>
     <script src="js/nav.js"></script>
 
-    <section class="hero">
-        <div class="hero-content">
-            <h1>Comprendre le programme<br>qui change la France</h1>
-            <p>1000+ propositions pour l'écologie, le travail, la santé, l'éducation et la démocratie. Accessibles à toutes et tous.</p>
-            <div class="search-container">
-                <div class="search-box">
-                    <input type="text" id="searchInput" placeholder="Rechercher... (ex: retraite, SMIC, logement, écologie)">
-                    <button id="searchBtn">🔍 Rechercher</button>
-                </div>
-            </div>
+    <div class="hero">
+        <div class="container">
+            <h1>🌱 Décoder, comparer, agir</h1>
+            <p>SOLARPUNK/France2100 vulgarise les propositions politiques et les confronte aux rapports d’experts (climat, budget, justice sociale). Un laboratoire citoyen pour une démocratie plus éclairée.</p>
         </div>
-    </section>
-
-    <div id="resultsArea" class="results-area">
-        <div class="results-header">
-            <h2>📋 Résultats de recherche</h2>
-            <button class="close-results" id="closeResults">✕</button>
-        </div>
-        <div class="filter-buttons" id="dynamicFilterButtons"></div>
-        <div id="resultsList" class="measures-grid"></div>
-        <div id="resultsStats" class="stats"></div>
     </div>
 
-    <section class="categories" id="categoriesSection">
-        <h2 class="section-title">Explorer par thème</h2>
-        <p class="section-subtitle">Trouvez les mesures qui vous concernent directement</p>
-        <div class="grid-categories" id="dynamicCategoryCards"></div>
-    </section>
+    <div class="container">
+        <!-- Section Explorer le programme -->
+        <div class="section-title">📋 Explorer le programme</div>
+        <div class="cards-grid">
+            <a href="index.html#allMeasuresLink" class="card" id="allMeasuresLink">
+                <div class="card-icon">📜</div>
+                <div class="card-title">Toutes les mesures</div>
+                <div class="card-desc">Parcourez l’intégralité des 1000 propositions, classées par thème et sous-thème.</div>
+            </a>
+            <a href="index.html#themesLink" class="card" id="themesLink">
+                <div class="card-icon">🏷️</div>
+                <div class="card-title">Par thème</div>
+                <div class="card-desc">Travail, écologie, santé, éducation, logement… retrouvez les mesures qui vous concernent.</div>
+            </a>
+        </div>
 
-    <section class="featured">
-        <div class="featured-container">
-            <h2 class="section-title">⭐ Les mesures phares</h2>
-            <div id="featuredMeasures" class="measures-grid">
-                <div style="text-align: center; grid-column: 1/-1;">Chargement...</div>
+        <!-- Mini outil : mesure au hasard -->
+        <div class="shuffler">
+            <h3>🎲 Une mesure au hasard</h3>
+            <p>Découvrez une proposition aléatoire du programme.</p>
+            <button id="randomBtn">🍀 Mélanger et piocher</button>
+            <div id="randomResult" class="random-measure"></div>
+        </div>
+
+        <!-- Section Le Lab -->
+        <div class="section-title">🔬 Le Lab – Expérimentations citoyennes</div>
+        <div class="cards-grid">
+            <a href="budget.html" class="card">
+                <div class="card-icon">💰</div>
+                <div class="card-title">Analyse budgétaire</div>
+                <div class="card-desc">Extraction automatique des montants et visualisation du financement des mesures.</div>
+            </a>
+            <a href="lab-hcc.html" class="card">
+                <div class="card-icon">🌡️</div>
+                <div class="card-title">Confrontation HCC</div>
+                <div class="card-desc">Notre programme face aux 32 recommandations du Haut Conseil pour le Climat.</div>
+            </a>
+            <a href="chatbot.html" class="card">
+                <div class="card-icon">🤖</div>
+                <div class="card-title">Chatbot programmatique</div>
+                <div class="card-desc">Posez vos questions, obtenez des réponses simples et documentées.</div>
+            </a>
+            <a href="quizz.html" class="card">
+                <div class="card-icon">📝</div>
+                <div class="card-title">Quizz participatif</div>
+                <div class="card-desc">Testez vos connaissances sur le programme et ses impacts.</div>
+            </a>
+        </div>
+
+        <!-- Section Pourquoi ce site ? -->
+        <div class="section-title">💡 Pourquoi ce site ?</div>
+        <div class="cards-grid">
+            <div class="card" style="cursor: default;">
+                <div class="card-icon">🗳️</div>
+                <div class="card-title">Démocratie ouverte</div>
+                <div class="card-desc">Rendre les programmes politiques accessibles, interactifs et vérifiables par les citoyens.</div>
+            </div>
+            <div class="card" style="cursor: default;">
+                <div class="card-icon">⚖️</div>
+                <div class="card-title">Confrontation indépendante</div>
+                <div class="card-desc">Comparer les engagements avec les données officielles (HCC, Cour des comptes, etc.) pour évaluer leur sincérité.</div>
+            </div>
+            <div class="card" style="cursor: default;">
+                <div class="card-icon">🧪</div>
+                <div class="card-title">Laboratoire permanent</div>
+                <div class="card-desc">Nouveaux comparateurs, nouveaux rapports, amélioration continue – une plateforme évolutive.</div>
             </div>
         </div>
-    </section>
+    </div>
 
-    <footer class="footer">
-        <p>L'Avenir en commun - Programme de l'Union Populaire</p>
-        <p style="margin-top: 0.5rem; font-size: 0.75rem;">Site indépendant de vulgarisation - <span id="measureCount">500+</span> mesures disponibles - Mise à jour continue</p>
+    <footer>
+        ⚡ Projet citoyen et expérimental – Les données sont issues du programme « L’Avenir en commun ». Les analyses automatiques sont indicatives.
     </footer>
 
     <script src="js/data.js"></script>
-    <script src="js/main.js"></script>
-    <script src="js/measure.js"></script>
     <script>
-        // ----------------------------------------------
-        // 1. Mapping complet des catégories (libellés + icônes)
-        // ----------------------------------------------
-        function getCategoryLabelFull(cat) {
-            const labels = {
-                "travail": "Travail & Salaire",
-                "ecologie": "Écologie & Climat",
-                "sante": "Santé",
-                "education": "Éducation",
-                "logement": "Logement",
-                "democratie": "Démocratie & Justice",
-                "economie": "Économie & Fiscalité",
-                "international": "International",
-                "outremer": "Outre‑mer",
-                "migrations": "Migrations",
-                "egalite": "Égalité & Social",
-                "transports": "Transports",
-                "numerique": "Numérique & Internet",
-                "defense": "Défense & Armées",
-                "europe": "Europe",
-                "culture": "Culture",
-                "sport": "Sport",
-                "handicap": "Handicap",
-                "banques": "Banques & Finance",
-                "energie": "Énergie",
-                "espace": "Espace",
-                "mer": "Mer & Océan",
-                "foret": "Forêt",
-                "condition_animale": "Condition animale",
-                "quartiers_populaires": "Quartiers populaires",
-                "enfance": "Enfance & Protection",
-                "medias": "Médias",
-                "antiracisme": "Antiracisme & Égalité",
-                "ess": "Économie sociale & solidaire",
-                "jeunesse": "Jeunesse",
-                "securite": "Sécurité",
-                "social": "Social",
-                "justice": "Justice",
-                "institutions": "Institutions",
-                "recherche": "Recherche"
-            };
-            return labels[cat] || cat.charAt(0).toUpperCase() + cat.slice(1);
+        // Gestionnaire de mesure au hasard
+        const randomBtn = document.getElementById('randomBtn');
+        const randomResultDiv = document.getElementById('randomResult');
+        
+        function getRandomMeasure() {
+            if (!mesures || mesures.length === 0) return null;
+            const randomIndex = Math.floor(Math.random() * mesures.length);
+            return mesures[randomIndex];
         }
-
-        function getCategoryIcon(cat) {
-            const icons = {
-                "travail": "👔",
-                "ecologie": "🌿",
-                "sante": "🏥",
-                "education": "📚",
-                "logement": "🏠",
-                "democratie": "🗳️",
-                "economie": "💰",
-                "international": "🌍",
-                "outremer": "🏝️",
-                "migrations": "🚶",
-                "egalite": "🤝",
-                "transports": "🚆",
-                "numerique": "💻",
-                "defense": "🛡️",
-                "europe": "🇪🇺",
-                "culture": "🎭",
-                "sport": "⚽",
-                "handicap": "♿",
-                "banques": "🏦",
-                "energie": "⚡",
-                "espace": "🚀",
-                "mer": "🌊",
-                "foret": "🌲",
-                "condition_animale": "🐾",
-                "quartiers_populaires": "🏙️",
-                "enfance": "🧸",
-                "medias": "📺",
-                "antiracisme": "✊",
-                "ess": "🤝",
-                "jeunesse": "🧑‍🎓",
-                "securite": "🛡️",
-                "social": "🤝",
-                "justice": "⚖️",
-                "institutions": "🏛️",
-                "recherche": "🔬"
-            };
-            return icons[cat] || "📌";
-        }
-
-        // ----------------------------------------------
-        // 2. Chargement des données
-        // ----------------------------------------------
-        let currentMeasures = typeof mesures !== 'undefined' ? mesures : [];
-        const measureCountSpan = document.getElementById('measureCount');
-        if (measureCountSpan && currentMeasures.length) measureCountSpan.textContent = currentMeasures.length;
-
-        const allCategories = [...new Set(currentMeasures.map(m => m.categorie))].sort();
-
-        // ----------------------------------------------
-        // 3. Génération dynamique des filtres
-        // ----------------------------------------------
-        const filterContainer = document.getElementById('dynamicFilterButtons');
-        if (filterContainer) {
-            let buttonsHtml = `<button class="filter-btn active" data-filter="all">📌 Tous</button>`;
-            allCategories.forEach(cat => {
-                buttonsHtml += `<button class="filter-btn" data-filter="${cat}">${getCategoryLabelFull(cat)}</button>`;
-            });
-            filterContainer.innerHTML = buttonsHtml;
-        }
-
-        // ----------------------------------------------
-        // 4. Génération des cartes thématiques (avec compteur)
-        // ----------------------------------------------
-        function getThemeExcerpt(measuresArray, category) {
-            const sample = measuresArray.find(m => m.categorie === category);
-            if (sample && sample.resume) return sample.resume.substring(0, 90) + (sample.resume.length > 90 ? "…" : "");
-            return "Découvrez toutes les mesures de ce thème.";
-        }
-
-        const cardsContainer = document.getElementById('dynamicCategoryCards');
-        if (cardsContainer) {
-            let cardsHtml = '';
-            allCategories.forEach(cat => {
-                const label = getCategoryLabelFull(cat);
-                const icon = getCategoryIcon(cat);
-                const excerpt = getThemeExcerpt(currentMeasures, cat);
-                const measureCount = currentMeasures.filter(m => m.categorie === cat).length;
-                cardsHtml += `
-                    <a href="#" class="category-card" data-category="${cat}">
-                        <h3>${icon} ${label}</h3>
-                        <p>${excerpt}</p>
-                        <span class="category-count">📊 ${measureCount} mesure${measureCount > 1 ? 's' : ''}</span>
-                    </a>
-                `;
-            });
-            cardsContainer.innerHTML = cardsHtml;
-        }
-
-        // ----------------------------------------------
-        // 5. Fonctions de recherche et d'affichage
-        // ----------------------------------------------
-        function displayResults(results) {
-            const container = document.getElementById('resultsList');
-            const stats = document.getElementById('resultsStats');
-            const area = document.getElementById('resultsArea');
-            if (!container) return;
-            if (results.length === 0) {
-                container.innerHTML = '<p style="text-align:center; grid-column:1/-1;">Aucun résultat trouvé. Essayez d\'autres mots-clés.</p>';
-                stats.innerHTML = '';
-                area.classList.add('show');
+        
+        function displayRandomMeasure() {
+            const measure = getRandomMeasure();
+            if (!measure) {
+                randomResultDiv.innerHTML = '<p>❌ Base de données non disponible.</p>';
+                randomResultDiv.style.display = 'block';
                 return;
             }
-            container.innerHTML = results.map(m => `
-                <div class="measure-card">
-                    <span class="measure-tag">${getCategoryLabelFull(m.categorie)}</span>
-                    <h4>${m.titre}</h4>
-                    <p>${m.resume}</p>
-                    <a href="mesure.html?id=${m.id}" class="measure-link">Voir le détail →</a>
-                </div>
-            `).join('');
-            stats.innerHTML = `${results.length} résultat(s) trouvé(s) sur ${currentMeasures.length} mesures`;
-            area.classList.add('show');
+            const categorieLabels = {
+                "travail": "👔 Travail", "ecologie": "🌿 Écologie", "sante": "🏥 Santé",
+                "education": "📚 Éducation", "logement": "🏠 Logement", "democratie": "🗳️ Démocratie",
+                "economie": "💰 Économie", "international": "🌍 International", "outremer": "🏝️ Outre‑mer",
+                "migrations": "🚶 Migrations", "egalite": "🤝 Égalité", "transports": "🚆 Transports",
+                "numerique": "💻 Numérique", "defense": "🛡️ Défense", "europe": "🇪🇺 Europe",
+                "culture": "🎭 Culture", "sport": "⚽ Sport", "handicap": "♿ Handicap",
+                "banques": "🏦 Banques", "energie": "⚡ Énergie", "espace": "🚀 Espace",
+                "mer": "🌊 Mer", "foret": "🌲 Forêt", "condition_animale": "🐾 Condition animale",
+                "quartiers_populaires": "🏙️ Quartiers populaires", "enfance": "🧸 Enfance",
+                "medias": "📺 Médias", "antiracisme": "✊ Antiracisme", "ess": "🤝 ESS",
+                "jeunesse": "🧑‍🎓 Jeunesse"
+            };
+            const catName = categorieLabels[measure.categorie] || measure.categorie;
+            randomResultDiv.innerHTML = `
+                <h4>${measure.titre}</h4>
+                <p>${measure.resume || 'Aucun résumé disponible.'}</p>
+                <div><span class="badge">${catName}</span></div>
+                <div style="margin-top: 0.5rem;"><a href="${measure.url || '#'}" class="btn" style="font-size:0.8rem;">🔍 Voir le détail</a></div>
+            `;
+            randomResultDiv.style.display = 'block';
         }
-
-        function search(query, filter) {
-            let results = currentMeasures;
-            if (filter !== 'all') {
-                results = results.filter(m => m.categorie === filter);
-            }
-            if (query.trim()) {
-                const lowerQuery = query.toLowerCase();
-                results = results.filter(m => 
-                    m.titre.toLowerCase().includes(lowerQuery) || 
-                    m.resume.toLowerCase().includes(lowerQuery) ||
-                    (m.motscles && m.motscles.some(tag => tag.toLowerCase().includes(lowerQuery)))
-                );
-            }
-            return results;
-        }
-
-        function displayFeatured() {
-            const featuredContainer = document.getElementById('featuredMeasures');
-            if (!featuredContainer) return;
-            const featured = currentMeasures.filter(m => m.statut === 'mesure_cle').slice(0, 12);
-            if (featured.length === 0) {
-                featuredContainer.innerHTML = '<div style="text-align: center; grid-column: 1/-1;">Aucune mesure phare trouvée.</div>';
-                return;
-            }
-            featuredContainer.innerHTML = featured.map(m => `
-                <div class="measure-card">
-                    <span class="measure-tag">${getCategoryLabelFull(m.categorie)}</span>
-                    <h4>${m.titre}</h4>
-                    <p>${m.resume.substring(0, 100)}${m.resume.length > 100 ? '…' : ''}</p>
-                    <a href="mesure.html?id=${m.id}" class="measure-link">Voir le détail →</a>
-                </div>
-            `).join('');
-        }
-
-        // ----------------------------------------------
-        // 6. Événements DOM
-        // ----------------------------------------------
-        const searchBtn = document.getElementById('searchBtn');
-        const searchInput = document.getElementById('searchInput');
-        const closeResults = document.getElementById('closeResults');
-        const allMeasuresLink = document.getElementById('allMeasuresLink');
-        const themesLink = document.getElementById('themesLink');
-        const homeLink = document.getElementById('homeLink');
-
-        function getActiveFilter() {
-            const active = document.querySelector('.filter-btn.active');
-            return active ? active.dataset.filter : 'all';
-        }
-
-        if (searchBtn) {
-            searchBtn.addEventListener('click', () => {
-                const query = searchInput.value;
-                const filter = getActiveFilter();
-                const results = search(query, filter);
-                displayResults(results);
-                document.getElementById('resultsArea').scrollIntoView({ behavior: 'smooth', block: 'start' });
-            });
-        }
-        if (searchInput) {
-            searchInput.addEventListener('keypress', (e) => {
-                if (e.key === 'Enter') searchBtn.click();
-            });
-        }
-        if (closeResults) {
-            closeResults.addEventListener('click', () => {
-                document.getElementById('resultsArea').classList.remove('show');
-            });
-        }
-
-        if (allMeasuresLink) {
-            allMeasuresLink.addEventListener('click', (e) => {
-                e.preventDefault();
-                const allBtn = document.querySelector('.filter-btn[data-filter="all"]');
-                if (allBtn) allBtn.click();
-                if (searchInput) searchInput.value = '';
-                const results = search('', 'all');
-                displayResults(results);
-                document.getElementById('resultsArea').scrollIntoView({ behavior: 'smooth', block: 'start' });
-            });
-        }
-
-        if (themesLink) {
-            themesLink.addEventListener('click', (e) => {
-                e.preventDefault();
-                const section = document.getElementById('categoriesSection');
-                if (section) section.scrollIntoView({ behavior: 'smooth', block: 'start' });
-                document.getElementById('resultsArea').classList.remove('show');
-            });
-        }
-
-        if (homeLink) {
-            homeLink.addEventListener('click', (e) => {
-                e.preventDefault();
-                window.scrollTo({ top: 0, behavior: 'smooth' });
-                document.getElementById('resultsArea').classList.remove('show');
-                if (searchInput) searchInput.value = '';
-            });
-        }
-
-        document.addEventListener('click', (e) => {
-            if (e.target.classList && e.target.classList.contains('filter-btn')) {
-                document.querySelectorAll('.filter-btn').forEach(btn => btn.classList.remove('active'));
-                e.target.classList.add('active');
-                const query = searchInput ? searchInput.value : '';
-                const filter = e.target.dataset.filter;
-                const results = search(query, filter);
-                if (document.getElementById('resultsArea').classList.contains('show')) {
-                    displayResults(results);
-                }
-            }
-            if (e.target.closest('.category-card')) {
-                e.preventDefault();
-                const card = e.target.closest('.category-card');
-                const category = card.dataset.category;
-                const targetFilter = Array.from(document.querySelectorAll('.filter-btn')).find(btn => btn.dataset.filter === category);
-                if (targetFilter) targetFilter.click();
-                if (searchInput) searchInput.value = '';
-                const results = search('', category);
-                displayResults(results);
-                document.getElementById('resultsArea').scrollIntoView({ behavior: 'smooth', block: 'start' });
-            }
-        });
-
-        displayFeatured();
-        console.log(`✅ Base de données chargée : ${currentMeasures.length} mesures, ${allCategories.length} catégories.`);
+        
+        randomBtn.addEventListener('click', displayRandomMeasure);
+        
+     
     </script>
 </body>
 </html>
