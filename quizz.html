@@ -84,14 +84,18 @@
             display: block;
             margin: 1rem auto 0;
         }
-        .restart-btn {
-            background: #3498db;
-            margin-top: 0.5rem;
+        .error-message {
+            background: #fdeded;
+            color: #e74c3c;
+            padding: 1rem;
+            border-radius: 12px;
+            text-align: center;
+            margin-bottom: 1rem;
         }
     </style>
 </head>
 <body>
-     <script src="js/nav.js"></script>
+    <script src="js/nav.js"></script>
 
     <div class="quizz-container" id="quizzContainer">
         <div class="score" id="scoreDisplay">Score : 0 / 0</div>
@@ -105,98 +109,101 @@
 
     <script src="js/data.js"></script>
     <script>
-        let mesures = typeof mesures !== 'undefined' ? mesures : [];
-        let currentQuestion = null;
-        let currentOptions = [];
-        let currentAnswer = null;
-        let score = 0;
-        let questionsAnswered = 0;
-        let waitingForNext = false;
-        
-        // Fonction pour obtenir 3 titres aléatoires différents du bon
-        function getRandomTitles(excludeTitle, excludeId) {
-            const others = mesures.filter(m => m.id !== excludeId && m.titre !== excludeTitle);
-            // Mélanger
-            for (let i = others.length - 1; i > 0; i--) {
-                const j = Math.floor(Math.random() * (i + 1));
-                [others[i], others[j]] = [others[j], others[i]];
+        function initQuizz() {
+            if (typeof mesures === 'undefined' || !mesures.length) {
+                console.error("mesures non défini ou vide");
+                document.getElementById('questionText').innerHTML = '<div class="error-message">❌ Base de données non chargée. Vérifiez que le fichier js/data.js existe et contient la variable "mesures".</div>';
+                return;
             }
-            return others.slice(0, 3).map(m => m.titre);
-        }
-        
-        function generateQuestion() {
-            // Choisir une mesure aléatoire
-            const randomIndex = Math.floor(Math.random() * mesures.length);
-            const measure = mesures[randomIndex];
-            const correctTitle = measure.titre;
-            const fakeTitles = getRandomTitles(correctTitle, measure.id);
-            const options = [correctTitle, ...fakeTitles];
-            // Mélanger les options
-            for (let i = options.length - 1; i > 0; i--) {
-                const j = Math.floor(Math.random() * (i + 1));
-                [options[i], options[j]] = [options[j], options[i]];
-            }
-            currentQuestion = {
-                description: measure.resume,
-                correctTitle: correctTitle,
-                options: options,
-                measureId: measure.id
-            };
-            currentAnswer = null;
-            waitingForNext = false;
             
-            // Affichage
-            document.getElementById('questionText').innerHTML = `📖 ${currentQuestion.description}`;
-            const optionsContainer = document.getElementById('optionsContainer');
-            optionsContainer.innerHTML = '';
-            currentQuestion.options.forEach(opt => {
-                const btn = document.createElement('button');
-                btn.className = 'option-btn';
-                btn.textContent = opt;
-                btn.addEventListener('click', () => checkAnswer(opt, btn));
-                optionsContainer.appendChild(btn);
-            });
-            document.getElementById('feedback').innerHTML = '';
-            document.getElementById('nextBtn').style.display = 'none';
-            document.getElementById('scoreDisplay').innerHTML = `Score : ${score} / ${questionsAnswered}`;
-        }
-        
-        function checkAnswer(selected, btnElement) {
-            if (waitingForNext) return;
-            waitingForNext = true;
-            const isCorrect = (selected === currentQuestion.correctTitle);
-            questionsAnswered++;
-            if (isCorrect) {
-                score++;
-                document.getElementById('feedback').innerHTML = '<div class="feedback correct-feedback">✅ Bonne réponse !</div>';
-            } else {
-                document.getElementById('feedback').innerHTML = `<div class="feedback wrong-feedback">❌ Mauvaise réponse. La bonne réponse était : "${currentQuestion.correctTitle}".</div>`;
-            }
-            // Colorer les boutons
-            const allBtns = document.querySelectorAll('.option-btn');
-            allBtns.forEach(btn => {
-                if (btn.textContent === currentQuestion.correctTitle) {
-                    btn.classList.add('correct');
-                } else if (btn === btnElement && btn.textContent !== currentQuestion.correctTitle) {
-                    btn.classList.add('wrong');
+            console.log(`✅ Quizz initialisé avec ${mesures.length} mesures`);
+            
+            let currentMesures = mesures;
+            let currentQuestion = null;
+            let score = 0;
+            let questionsAnswered = 0;
+            let waitingForNext = false;
+            
+            function getRandomTitles(excludeTitle, excludeId) {
+                const others = currentMesures.filter(m => m.id !== excludeId && m.titre !== excludeTitle);
+                for (let i = others.length - 1; i > 0; i--) {
+                    const j = Math.floor(Math.random() * (i + 1));
+                    [others[i], others[j]] = [others[j], others[i]];
                 }
-                btn.disabled = true;
-            });
-            document.getElementById('scoreDisplay').innerHTML = `Score : ${score} / ${questionsAnswered}`;
-            document.getElementById('nextBtn').style.display = 'block';
-        }
-        
-        function nextQuestion() {
-            if (!waitingForNext) return;
-            generateQuestion();
-        }
-        
-        // Initialisation
-        if (!mesures.length) {
-            document.getElementById('questionText').innerHTML = "❌ Base de données non chargée. Vérifiez data.js";
-        } else {
+                return others.slice(0, 3).map(m => m.titre);
+            }
+            
+            function generateQuestion() {
+                if (!currentMesures.length) return;
+                const randomIndex = Math.floor(Math.random() * currentMesures.length);
+                const measure = currentMesures[randomIndex];
+                const correctTitle = measure.titre;
+                const fakeTitles = getRandomTitles(correctTitle, measure.id);
+                let options = [correctTitle, ...fakeTitles];
+                for (let i = options.length - 1; i > 0; i--) {
+                    const j = Math.floor(Math.random() * (i + 1));
+                    [options[i], options[j]] = [options[j], options[i]];
+                }
+                currentQuestion = {
+                    description: measure.resume,
+                    correctTitle: correctTitle,
+                    options: options,
+                    measureId: measure.id
+                };
+                waitingForNext = false;
+                
+                document.getElementById('questionText').innerHTML = `📖 ${currentQuestion.description}`;
+                const optionsContainer = document.getElementById('optionsContainer');
+                optionsContainer.innerHTML = '';
+                currentQuestion.options.forEach(opt => {
+                    const btn = document.createElement('button');
+                    btn.className = 'option-btn';
+                    btn.textContent = opt;
+                    btn.addEventListener('click', () => checkAnswer(opt, btn));
+                    optionsContainer.appendChild(btn);
+                });
+                document.getElementById('feedback').innerHTML = '';
+                document.getElementById('nextBtn').style.display = 'none';
+                document.getElementById('scoreDisplay').innerHTML = `Score : ${score} / ${questionsAnswered}`;
+            }
+            
+            function checkAnswer(selected, btnElement) {
+                if (waitingForNext) return;
+                waitingForNext = true;
+                const isCorrect = (selected === currentQuestion.correctTitle);
+                questionsAnswered++;
+                if (isCorrect) {
+                    score++;
+                    document.getElementById('feedback').innerHTML = '<div class="feedback correct-feedback">✅ Bonne réponse !</div>';
+                } else {
+                    document.getElementById('feedback').innerHTML = `<div class="feedback wrong-feedback">❌ Mauvaise réponse. La bonne réponse était : "${currentQuestion.correctTitle}".</div>`;
+                }
+                const allBtns = document.querySelectorAll('.option-btn');
+                allBtns.forEach(btn => {
+                    if (btn.textContent === currentQuestion.correctTitle) {
+                        btn.classList.add('correct');
+                    } else if (btn === btnElement && btn.textContent !== currentQuestion.correctTitle) {
+                        btn.classList.add('wrong');
+                    }
+                    btn.disabled = true;
+                });
+                document.getElementById('scoreDisplay').innerHTML = `Score : ${score} / ${questionsAnswered}`;
+                document.getElementById('nextBtn').style.display = 'block';
+            }
+            
+            function nextQuestion() {
+                if (!waitingForNext) return;
+                generateQuestion();
+            }
+            
             generateQuestion();
             document.getElementById('nextBtn').addEventListener('click', nextQuestion);
+        }
+        
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', initQuizz);
+        } else {
+            initQuizz();
         }
     </script>
 </body>
