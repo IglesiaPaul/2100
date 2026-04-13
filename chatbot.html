@@ -96,10 +96,18 @@
             margin-top: 0.3rem;
             font-size: 0.85rem;
         }
+        .error-message {
+            background: #fdeded;
+            color: #e74c3c;
+            padding: 1rem;
+            border-radius: 12px;
+            text-align: center;
+        }
     </style>
 </head>
 <body>
-    
+    <!-- Navigation injectée par nav.js -->
+    <script src="js/nav.js"></script>
 
     <div class="chat-container">
         <div class="chat-messages" id="chatMessages">
@@ -121,119 +129,118 @@
             <button id="chatSend" class="chat-send">Envoyer</button>
         </div>
     </div>
-<script src="js/nav.js"></script>
+
     <script src="js/data.js"></script>
     <script>
-        // Chargement des données
-        let mesures = typeof mesures !== 'undefined' ? mesures : [];
-        
-        // Fonction de recherche simple par mots-clés
-        function findBestMeasure(question) {
-            if (!mesures.length) return null;
-            const lowerQuestion = question.toLowerCase();
-            const words = lowerQuestion.split(/\s+/).filter(w => w.length > 2);
-            
-            let best = null;
-            let bestScore = 0;
-            
-            for (let m of mesures) {
-                let score = 0;
-                // Titre
-                const titreLower = m.titre.toLowerCase();
-                for (let w of words) {
-                    if (titreLower.includes(w)) score += 10;
-                }
-                // Résumé
-                const resumeLower = m.resume.toLowerCase();
-                for (let w of words) {
-                    if (resumeLower.includes(w)) score += 5;
-                }
-                // Mots-clés
-                if (m.motscles) {
-                    for (let tag of m.motscles) {
-                        const tagLower = tag.toLowerCase();
-                        for (let w of words) {
-                            if (tagLower.includes(w) || w.includes(tagLower)) score += 8;
-                        }
-                    }
-                }
-                // Bonus pour les mesures phares
-                if (m.statut === 'mesure_cle') score += 3;
-                
-                if (score > bestScore) {
-                    bestScore = score;
-                    best = m;
-                }
-            }
-            return bestScore > 0 ? best : null;
-        }
-        
-        // Ajouter un message dans le chat
-        function addMessage(text, isUser = false) {
-            const container = document.getElementById('chatMessages');
-            const div = document.createElement('div');
-            div.className = `message ${isUser ? 'user-message' : 'bot-message'}`;
-            div.innerHTML = text;
-            container.appendChild(div);
-            container.scrollTop = container.scrollHeight;
-        }
-        
-        function showTyping() {
-            const container = document.getElementById('chatMessages');
-            const typingDiv = document.createElement('div');
-            typingDiv.className = 'message bot-message typing';
-            typingDiv.id = 'typingIndicator';
-            typingDiv.textContent = '🤔 Je réfléchis...';
-            container.appendChild(typingDiv);
-            container.scrollTop = container.scrollHeight;
-        }
-        
-        function hideTyping() {
-            const typing = document.getElementById('typingIndicator');
-            if (typing) typing.remove();
-        }
-        
-        async function askQuestion(question) {
-            if (!question.trim()) return;
-            addMessage(question, true);
-            document.getElementById('chatInput').value = '';
-            showTyping();
-            
-            // Simuler un délai pour effet naturel
-            await new Promise(resolve => setTimeout(resolve, 300));
-            
-            const best = findBestMeasure(question);
-            hideTyping();
-            
-            if (!best) {
-                addMessage("😕 Désolé, je n'ai pas trouvé de mesure correspondant à votre question. Essayez d'autres mots-clés comme 'retraite', 'SMIC', 'logement', 'écologie'.");
+        // Attendre que data.js soit chargé
+        function initChatbot() {
+            if (typeof mesures === 'undefined' || !mesures.length) {
+                console.error("mesures non défini ou vide");
+                const container = document.getElementById('chatMessages');
+                const errorDiv = document.createElement('div');
+                errorDiv.className = 'message bot-message error-message';
+                errorDiv.innerHTML = "⚠️ La base de données n'a pas pu être chargée. Vérifiez que le fichier <strong>js/data.js</strong> existe et contient la variable 'mesures'.";
+                container.appendChild(errorDiv);
                 return;
             }
             
-            const measureLink = `<a href="mesure.html?id=${best.id}" class="measure-link">🔗 Voir le détail de la mesure →</a>`;
-            const response = `📌 <strong>${best.titre}</strong><br>${best.resume}<br>${measureLink}`;
-            addMessage(response, false);
+            console.log(`✅ Chatbot initialisé avec ${mesures.length} mesures`);
+            
+            let currentMesures = mesures; // variable locale
+            
+            function findBestMeasure(question) {
+                const lowerQuestion = question.toLowerCase();
+                const words = lowerQuestion.split(/\s+/).filter(w => w.length > 2);
+                
+                let best = null;
+                let bestScore = 0;
+                
+                for (let m of currentMesures) {
+                    let score = 0;
+                    const titreLower = m.titre.toLowerCase();
+                    for (let w of words) {
+                        if (titreLower.includes(w)) score += 10;
+                    }
+                    const resumeLower = m.resume.toLowerCase();
+                    for (let w of words) {
+                        if (resumeLower.includes(w)) score += 5;
+                    }
+                    if (m.motscles) {
+                        for (let tag of m.motscles) {
+                            const tagLower = tag.toLowerCase();
+                            for (let w of words) {
+                                if (tagLower.includes(w) || w.includes(tagLower)) score += 8;
+                            }
+                        }
+                    }
+                    if (m.statut === 'mesure_cle') score += 3;
+                    
+                    if (score > bestScore) {
+                        bestScore = score;
+                        best = m;
+                    }
+                }
+                return bestScore > 0 ? best : null;
+            }
+            
+            function addMessage(text, isUser = false) {
+                const container = document.getElementById('chatMessages');
+                const div = document.createElement('div');
+                div.className = `message ${isUser ? 'user-message' : 'bot-message'}`;
+                div.innerHTML = text;
+                container.appendChild(div);
+                container.scrollTop = container.scrollHeight;
+            }
+            
+            function showTyping() {
+                const container = document.getElementById('chatMessages');
+                const typingDiv = document.createElement('div');
+                typingDiv.className = 'message bot-message typing';
+                typingDiv.id = 'typingIndicator';
+                typingDiv.textContent = '🤔 Je réfléchis...';
+                container.appendChild(typingDiv);
+                container.scrollTop = container.scrollHeight;
+            }
+            
+            function hideTyping() {
+                const typing = document.getElementById('typingIndicator');
+                if (typing) typing.remove();
+            }
+            
+            async function askQuestion(question) {
+                if (!question.trim()) return;
+                addMessage(question, true);
+                document.getElementById('chatInput').value = '';
+                showTyping();
+                await new Promise(resolve => setTimeout(resolve, 300));
+                const best = findBestMeasure(question);
+                hideTyping();
+                if (!best) {
+                    addMessage("😕 Désolé, je n'ai pas trouvé de mesure correspondant à votre question. Essayez d'autres mots-clés comme 'retraite', 'SMIC', 'logement', 'écologie'.");
+                    return;
+                }
+                const measureLink = `<a href="mesure.html?id=${best.id}" class="measure-link">🔗 Voir le détail de la mesure →</a>`;
+                const response = `📌 <strong>${best.titre}</strong><br>${best.resume}<br>${measureLink}`;
+                addMessage(response, false);
+            }
+            
+            // Attacher événements
+            const sendBtn = document.getElementById('chatSend');
+            const input = document.getElementById('chatInput');
+            const suggestionBtns = document.querySelectorAll('.suggestion-btn');
+            
+            if (sendBtn) sendBtn.addEventListener('click', () => askQuestion(input.value));
+            if (input) input.addEventListener('keypress', (e) => { if (e.key === 'Enter') askQuestion(input.value); });
+            suggestionBtns.forEach(btn => {
+                btn.addEventListener('click', () => askQuestion(btn.textContent));
+            });
         }
         
-        // Événements
-        const sendBtn = document.getElementById('chatSend');
-        const input = document.getElementById('chatInput');
-        const suggestions = document.querySelectorAll('.suggestion-btn');
-        
-        sendBtn.addEventListener('click', () => askQuestion(input.value));
-        input.addEventListener('keypress', (e) => {
-            if (e.key === 'Enter') askQuestion(input.value);
-        });
-        
-        suggestions.forEach(btn => {
-            btn.addEventListener('click', () => askQuestion(btn.textContent));
-        });
-        
-        // Vérification des données
-        if (!mesures.length) {
-            addMessage("⚠️ La base de données n'a pas pu être chargée. Vérifiez que le fichier data.js est présent.", false);
+        // Attendre le chargement de data.js
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', initChatbot);
         } else {
-            console.log(`✅ Chatbot prêt - ${mesures.length} mesures disponibles`);
+            initChatbot();
         }
     </script>
 </body>
