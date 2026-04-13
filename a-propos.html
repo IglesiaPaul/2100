@@ -5,96 +5,176 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>À propos · SOLARPUNK/France2100</title>
     <link rel="stylesheet" href="css/style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,600;14..32,700&display=swap" rel="stylesheet">
     <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
         body {
-            background: #f5f7fa;
+            background: linear-gradient(145deg, #eaf7e8 0%, #d4e9d0 100%);
+            font-family: 'Inter', system-ui, -apple-system, sans-serif;
+            line-height: 1.5;
+            color: #1e2f2c;
         }
         .about-container {
             max-width: 1000px;
             margin: 2rem auto;
-            padding: 1rem;
+            padding: 0 1.5rem;
+            position: relative;
+            z-index: 2;
         }
+        /* Hero section */
         .hero-about {
-            background: linear-gradient(135deg, #1a5d8f, #0e3a5a);
+            background: linear-gradient(125deg, #1b4d3e 0%, #2f7d5c 100%);
             color: white;
-            padding: 2rem;
-            border-radius: 24px;
+            padding: 2rem 2rem;
+            border-radius: 32px;
             margin-bottom: 2rem;
             text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+        .hero-about::after {
+            content: "🌱";
+            font-size: 8rem;
+            opacity: 0.08;
+            position: absolute;
+            bottom: -2rem;
+            right: -1rem;
+            pointer-events: none;
+            transform: rotate(10deg);
         }
         .hero-about h1 {
+            font-size: 2rem;
+            font-weight: 700;
             margin: 0 0 0.5rem;
-            font-size: 1.8rem;
+            letter-spacing: -0.01em;
         }
         .hero-about p {
             margin: 0;
             opacity: 0.9;
+            font-size: 1rem;
         }
         .section-title {
-            font-size: 1.5rem;
+            font-size: 1.8rem;
+            font-weight: 700;
             margin: 2rem 0 1rem;
-            border-left: 5px solid #2b9e4a;
-            padding-left: 1rem;
+            background: linear-gradient(120deg, #1e4d3a, #3a8c6e);
+            background-clip: text;
+            -webkit-background-clip: text;
+            color: transparent;
+            display: inline-block;
+            position: relative;
+        }
+        .section-title::after {
+            content: "";
+            display: block;
+            width: 60px;
+            height: 4px;
+            background: linear-gradient(90deg, #3a8c6e, #b8e1a0);
+            margin-top: 8px;
+            border-radius: 4px;
         }
         .card-about {
-            background: white;
-            border-radius: 20px;
+            background: rgba(255, 255, 255, 0.75);
+            backdrop-filter: blur(8px);
+            border-radius: 28px;
             padding: 1.5rem;
             margin-bottom: 1.5rem;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            border: 1px solid rgba(80, 140, 100, 0.3);
+            transition: all 0.2s;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+        }
+        .card-about:hover {
+            background: rgba(255, 255, 255, 0.9);
+            border-color: #8fc0a9;
+            transform: translateY(-2px);
         }
         .card-about h3 {
             margin-top: 0;
-            color: #1a5d8f;
+            margin-bottom: 0.75rem;
+            color: #1b4d3e;
             display: flex;
             align-items: center;
             gap: 0.5rem;
+            font-size: 1.4rem;
+            font-weight: 700;
+        }
+        .card-about p, .card-about ul {
+            color: #2c4a3e;
+            margin-bottom: 0.5rem;
+        }
+        .card-about ul {
+            padding-left: 1.2rem;
         }
         .contact-email {
-            background: #e8f5e9;
-            border-radius: 40px;
+            background: rgba(220, 240, 220, 0.8);
+            backdrop-filter: blur(4px);
+            border-radius: 60px;
             padding: 0.5rem 1rem;
             display: inline-flex;
             align-items: center;
             gap: 0.5rem;
             font-size: 1rem;
             margin-top: 0.5rem;
+            border: 1px solid rgba(60, 110, 80, 0.3);
         }
         .contact-email a {
-            color: #1a5d8f;
+            color: #1e5a44;
             text-decoration: none;
-            font-weight: bold;
+            font-weight: 700;
+            transition: color 0.2s;
         }
         .contact-email a:hover {
+            color: #2c7a5e;
             text-decoration: underline;
         }
         .tech-list {
             list-style: none;
             padding: 0;
             margin: 1rem 0 0;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
         }
         .tech-list li {
+            background: rgba(100, 140, 110, 0.15);
+            backdrop-filter: blur(2px);
+            padding: 0.3rem 0.9rem;
+            border-radius: 40px;
+            font-size: 0.8rem;
+            font-weight: 500;
+            color: #1e4d3a;
+            border: 1px solid rgba(80, 140, 100, 0.3);
+        }
+        .badge-version {
+            background: linear-gradient(95deg, #2b9e4a, #1e6b34);
+            color: white;
+            padding: 0.2rem 0.8rem;
+            border-radius: 40px;
+            font-size: 0.7rem;
+            font-weight: 600;
             display: inline-block;
-            background: #e9ecef;
-            padding: 0.3rem 0.8rem;
-            border-radius: 20px;
-            margin: 0.2rem;
-            font-size: 0.85rem;
+            margin-top: 0.5rem;
         }
         footer {
             text-align: center;
-            margin-top: 2rem;
-            padding: 1rem;
-            color: #6c757d;
-            border-top: 1px solid #dee2e6;
+            margin-top: 3rem;
+            padding: 1.5rem;
+            color: #3a6b58;
+            border-top: 1px solid rgba(60, 110, 80, 0.2);
+            font-size: 0.85rem;
         }
-        .badge-version {
-            background: #ffd966;
-            color: #1a5d8f;
-            padding: 0.2rem 0.6rem;
-            border-radius: 20px;
-            font-size: 0.7rem;
-            margin-left: 0.5rem;
+        footer a {
+            color: #2c7a5e;
+            text-decoration: none;
+        }
+        @media (max-width: 768px) {
+            .hero-about h1 { font-size: 1.5rem; }
+            .section-title { font-size: 1.5rem; }
+            .card-about { padding: 1.2rem; }
         }
     </style>
 </head>
@@ -157,12 +237,13 @@
         <div class="card-about">
             <h3>📜 Licence et réutilisation</h3>
             <p>Les contenus (textes des mesures) sont issus d’un programme politique librement diffusable. Les résumés et codes sources sont disponibles sous licence <strong>MIT</strong>. Vous pouvez réutiliser, modifier et partager à condition de citer l’origine.</p>
-            <p><span class="badge-version">Version 3.0 – “Solarpunk”</span></p>
+            <div class="badge-version">Version 3.0 – “Solarpunk”</div>
         </div>
     </div>
 
     <footer>
-        ⚡ Projet citoyen – Données et analyses à caractère expérimental.
+        ⚡ Projet citoyen – Données et analyses à caractère expérimental.<br>
+        <a href="index.html">Retour à l’accueil</a>
     </footer>
 </body>
 </html>
