@@ -73,6 +73,12 @@
             margin-bottom: 1rem;
             font-weight: bold;
         }
+        .progress {
+            text-align: center;
+            font-size: 0.9rem;
+            color: #666;
+            margin-bottom: 1rem;
+        }
         .next-btn {
             background: #2b9e4a;
             color: white;
@@ -84,6 +90,54 @@
             display: block;
             margin: 1rem auto 0;
         }
+        .restart-btn {
+            background: #3498db;
+            margin-top: 0.5rem;
+        }
+        .settings {
+            display: flex;
+            justify-content: center;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+            align-items: center;
+        }
+        .settings label {
+            font-weight: bold;
+        }
+        .settings select {
+            padding: 0.3rem 0.6rem;
+            border-radius: 8px;
+            border: 1px solid #ccc;
+        }
+        .final-score {
+            text-align: center;
+            margin: 2rem 0;
+            padding: 1rem;
+            background: #e8f5e9;
+            border-radius: 16px;
+        }
+        .final-score h2 {
+            margin: 0 0 0.5rem;
+        }
+        .share-buttons {
+            display: flex;
+            justify-content: center;
+            gap: 1rem;
+            margin-top: 1.5rem;
+        }
+        .share-btn {
+            display: inline-block;
+            padding: 0.5rem 1rem;
+            border-radius: 30px;
+            color: white;
+            text-decoration: none;
+            font-size: 0.9rem;
+            background: #2b9e4a;
+        }
+        .share-twitter { background: #1DA1F2; }
+        .share-facebook { background: #4267B2; }
+        .share-whatsapp { background: #25D366; }
+        .share-copy { background: #6c757d; }
         .error-message {
             background: #fdeded;
             color: #e74c3c;
@@ -98,12 +152,32 @@
     <script src="js/nav.js"></script>
 
     <div class="quizz-container" id="quizzContainer">
+        <div class="settings">
+            <label>📊 Nombre de questions :</label>
+            <select id="questionCountSelect">
+                <option value="5">5 questions</option>
+                <option value="10" selected>10 questions</option>
+                <option value="20">20 questions</option>
+                <option value="-1">Illimité (infini)</option>
+            </select>
+            <button id="restartQuizzBtn" class="restart-btn" style="padding: 0.3rem 1rem;">🔄 Redémarrer</button>
+        </div>
         <div class="score" id="scoreDisplay">Score : 0 / 0</div>
+        <div class="progress" id="progressDisplay"></div>
         <div id="questionArea">
             <div class="question-text" id="questionText">Chargement...</div>
             <div class="options" id="optionsContainer"></div>
             <div id="feedback"></div>
             <button id="nextBtn" class="next-btn" style="display: none;">Question suivante →</button>
+        </div>
+        <div id="shareArea" style="display: none;">
+            <div class="final-score" id="finalScoreArea"></div>
+            <div class="share-buttons">
+                <a href="#" id="shareTwitter" class="share-btn share-twitter" target="_blank">🐦 Twitter</a>
+                <a href="#" id="shareFacebook" class="share-btn share-facebook" target="_blank">📘 Facebook</a>
+                <a href="#" id="shareWhatsApp" class="share-btn share-whatsapp" target="_blank">💬 WhatsApp</a>
+                <button id="shareCopy" class="share-btn share-copy">📋 Copier le lien</button>
+            </div>
         </div>
     </div>
 
@@ -111,18 +185,24 @@
     <script>
         function initQuizz() {
             if (typeof mesures === 'undefined' || !mesures.length) {
-                console.error("mesures non défini ou vide");
                 document.getElementById('questionText').innerHTML = '<div class="error-message">❌ Base de données non chargée. Vérifiez que le fichier js/data.js existe et contient la variable "mesures".</div>';
                 return;
             }
-            
-            console.log(`✅ Quizz initialisé avec ${mesures.length} mesures`);
             
             let currentMesures = mesures;
             let currentQuestion = null;
             let score = 0;
             let questionsAnswered = 0;
             let waitingForNext = false;
+            let totalQuestions = 10; // valeur par défaut
+            let gameActive = true;
+            let maxQuestions = totalQuestions;
+            
+            const select = document.getElementById('questionCountSelect');
+            const restartBtn = document.getElementById('restartQuizzBtn');
+            const nextBtn = document.getElementById('nextBtn');
+            const shareArea = document.getElementById('shareArea');
+            const questionArea = document.getElementById('questionArea');
             
             function getRandomTitles(excludeTitle, excludeId) {
                 const others = currentMesures.filter(m => m.id !== excludeId && m.titre !== excludeTitle);
@@ -133,8 +213,46 @@
                 return others.slice(0, 3).map(m => m.titre);
             }
             
+            function updateUI() {
+                document.getElementById('scoreDisplay').innerHTML = `Score : ${score} / ${questionsAnswered}`;
+                if (maxQuestions > 0 && questionsAnswered <= maxQuestions) {
+                    document.getElementById('progressDisplay').innerHTML = `Question ${questionsAnswered} / ${maxQuestions === -1 ? '∞' : maxQuestions}`;
+                }
+            }
+            
+            function endGame() {
+                gameActive = false;
+                questionArea.style.display = 'none';
+                shareArea.style.display = 'block';
+                const percentage = Math.round((score / questionsAnswered) * 100);
+                let message = '';
+                if (percentage === 100) message = '🎉 Parfait ! Vous êtes incollable sur le programme !';
+                else if (percentage >= 80) message = '👍 Très bien ! Vous connaissez bien le programme.';
+                else if (percentage >= 50) message = '📚 Pas mal ! Continuez à découvrir le programme.';
+                else message = '🌱 Continuez à explorer le programme pour mieux le connaître !';
+                document.getElementById('finalScoreArea').innerHTML = `
+                    <h2>✨ Quizz terminé ✨</h2>
+                    <p>Votre score : <strong>${score} / ${questionsAnswered}</strong> (${percentage}%)</p>
+                    <p>${message}</p>
+                `;
+                // Partager le résultat
+                const shareText = `J'ai obtenu ${score}/${questionsAnswered} au quizz du programme "L'Avenir en commun" ! Et vous ? Testez vos connaissances :`;
+                const shareUrl = encodeURIComponent(window.location.href);
+                document.getElementById('shareTwitter').href = `https://twitter.com/intent/tweet?text=${encodeURIComponent(shareText)}&url=${shareUrl}`;
+                document.getElementById('shareFacebook').href = `https://www.facebook.com/sharer/sharer.php?u=${shareUrl}`;
+                document.getElementById('shareWhatsApp').href = `https://wa.me/?text=${encodeURIComponent(shareText + ' ' + window.location.href)}`;
+                document.getElementById('shareCopy').onclick = () => {
+                    navigator.clipboard.writeText(window.location.href);
+                    alert('Lien copié !');
+                };
+            }
+            
             function generateQuestion() {
-                if (!currentMesures.length) return;
+                if (!gameActive) return;
+                if (maxQuestions !== -1 && questionsAnswered >= maxQuestions) {
+                    endGame();
+                    return;
+                }
                 const randomIndex = Math.floor(Math.random() * currentMesures.length);
                 const measure = currentMesures[randomIndex];
                 const correctTitle = measure.titre;
@@ -151,7 +269,6 @@
                     measureId: measure.id
                 };
                 waitingForNext = false;
-                
                 document.getElementById('questionText').innerHTML = `📖 ${currentQuestion.description}`;
                 const optionsContainer = document.getElementById('optionsContainer');
                 optionsContainer.innerHTML = '';
@@ -163,17 +280,17 @@
                     optionsContainer.appendChild(btn);
                 });
                 document.getElementById('feedback').innerHTML = '';
-                document.getElementById('nextBtn').style.display = 'none';
-                document.getElementById('scoreDisplay').innerHTML = `Score : ${score} / ${questionsAnswered}`;
+                nextBtn.style.display = 'none';
+                updateUI();
             }
             
             function checkAnswer(selected, btnElement) {
-                if (waitingForNext) return;
+                if (waitingForNext || !gameActive) return;
                 waitingForNext = true;
                 const isCorrect = (selected === currentQuestion.correctTitle);
                 questionsAnswered++;
+                if (isCorrect) score++;
                 if (isCorrect) {
-                    score++;
                     document.getElementById('feedback').innerHTML = '<div class="feedback correct-feedback">✅ Bonne réponse !</div>';
                 } else {
                     document.getElementById('feedback').innerHTML = `<div class="feedback wrong-feedback">❌ Mauvaise réponse. La bonne réponse était : "${currentQuestion.correctTitle}".</div>`;
@@ -187,17 +304,50 @@
                     }
                     btn.disabled = true;
                 });
-                document.getElementById('scoreDisplay').innerHTML = `Score : ${score} / ${questionsAnswered}`;
-                document.getElementById('nextBtn').style.display = 'block';
+                updateUI();
+                if (maxQuestions !== -1 && questionsAnswered >= maxQuestions) {
+                    endGame();
+                } else {
+                    nextBtn.style.display = 'block';
+                }
             }
             
             function nextQuestion() {
-                if (!waitingForNext) return;
+                if (!waitingForNext || !gameActive) return;
                 generateQuestion();
             }
             
-            generateQuestion();
-            document.getElementById('nextBtn').addEventListener('click', nextQuestion);
+            function restartGame() {
+                score = 0;
+                questionsAnswered = 0;
+                waitingForNext = false;
+                gameActive = true;
+                maxQuestions = parseInt(select.value);
+                if (maxQuestions === -1) maxQuestions = -1;
+                totalQuestions = maxQuestions;
+                questionArea.style.display = 'block';
+                shareArea.style.display = 'none';
+                generateQuestion();
+                updateUI();
+            }
+            
+            // Événements
+            nextBtn.addEventListener('click', nextQuestion);
+            restartBtn.addEventListener('click', restartGame);
+            select.addEventListener('change', () => {
+                if (!gameActive || (questionsAnswered === 0)) {
+                    restartGame();
+                } else {
+                    if (confirm('Changer le nombre de questions redémarrera le quizz. Continuer ?')) {
+                        restartGame();
+                    } else {
+                        select.value = (maxQuestions === -1 ? '-1' : maxQuestions.toString());
+                    }
+                }
+            });
+            
+            // Initialisation
+            restartGame();
         }
         
         if (document.readyState === 'loading') {
