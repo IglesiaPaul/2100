@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quizz - Programme L'Avenir en commun</title>
+    <link rel="stylesheet" href="css/style.css">
+    <style>
+        .quizz-container {
+            max-width: 800px;
+            margin: 2rem auto;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+            padding: 2rem;
+        }
+        .question-text {
+            font-size: 1.2rem;
+            line-height: 1.5;
+            background: #f5f5f5;
+            padding: 1.5rem;
+            border-radius: 16px;
+            margin-bottom: 1.5rem;
+            border-left: 5px solid #2b9e4a;
+        }
+        .options {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
+        .option-btn {
+            background: white;
+            border: 2px solid #e0e0e0;
+            border-radius: 12px;
+            padding: 1rem;
+            text-align: left;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .option-btn:hover {
+            border-color: #2b9e4a;
+            background: #e8f5e9;
+        }
+        .option-btn.correct {
+            background: #2b9e4a;
+            color: white;
+            border-color: #2b9e4a;
+        }
+        .option-btn.wrong {
+            background: #e74c3c;
+            color: white;
+            border-color: #e74c3c;
+        }
+        .feedback {
+            margin: 1rem 0;
+            padding: 1rem;
+            border-radius: 12px;
+            font-weight: bold;
+        }
+        .feedback.correct-feedback {
+            background: #e8f5e9;
+            color: #2b9e4a;
+        }
+        .feedback.wrong-feedback {
+            background: #fdeded;
+            color: #e74c3c;
+        }
+        .score {
+            text-align: center;
+            font-size: 1.2rem;
+            margin-bottom: 1rem;
+            font-weight: bold;
+        }
+        .next-btn {
+            background: #2b9e4a;
+            color: white;
+            border: none;
+            border-radius: 30px;
+            padding: 0.8rem 2rem;
+            font-size: 1rem;
+            cursor: pointer;
+            display: block;
+            margin: 1rem auto 0;
+        }
+        .restart-btn {
+            background: #3498db;
+            margin-top: 0.5rem;
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar">
+        <div class="nav-container">
+            <a href="index.html" class="logo">🌱 L'Avenir en commun</a>
+            <div class="nav-links">
+                <a href="index.html">Accueil</a>
+                <a href="index.html#allMeasuresLink">Toutes les mesures</a>
+                <a href="index.html#themesLink">Par thème</a>
+                <a href="https://lafranceinsoumise.fr/le-programme/" target="_blank">Le programme</a>
+                <a href="a-propos.html">À propos</a>
+                <a href="budget.html">💰 Budget</a>
+                <a href="chatbot.html">🤖 Chatbot</a>
+                <a href="quizz.html" style="font-weight: bold;">📝 Quizz</a>
+            </div>
+        </div>
+    </nav>
+
+    <div class="quizz-container" id="quizzContainer">
+        <div class="score" id="scoreDisplay">Score : 0 / 0</div>
+        <div id="questionArea">
+            <div class="question-text" id="questionText">Chargement...</div>
+            <div class="options" id="optionsContainer"></div>
+            <div id="feedback"></div>
+            <button id="nextBtn" class="next-btn" style="display: none;">Question suivante →</button>
+        </div>
+    </div>
+
+    <script src="js/data.js"></script>
+    <script>
+        let mesures = typeof mesures !== 'undefined' ? mesures : [];
+        let currentQuestion = null;
+        let currentOptions = [];
+        let currentAnswer = null;
+        let score = 0;
+        let questionsAnswered = 0;
+        let waitingForNext = false;
+        
+        // Fonction pour obtenir 3 titres aléatoires différents du bon
+        function getRandomTitles(excludeTitle, excludeId) {
+            const others = mesures.filter(m => m.id !== excludeId && m.titre !== excludeTitle);
+            // Mélanger
+            for (let i = others.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [others[i], others[j]] = [others[j], others[i]];
+            }
+            return others.slice(0, 3).map(m => m.titre);
+        }
+        
+        function generateQuestion() {
+            // Choisir une mesure aléatoire
+            const randomIndex = Math.floor(Math.random() * mesures.length);
+            const measure = mesures[randomIndex];
+            const correctTitle = measure.titre;
+            const fakeTitles = getRandomTitles(correctTitle, measure.id);
+            const options = [correctTitle, ...fakeTitles];
+            // Mélanger les options
+            for (let i = options.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [options[i], options[j]] = [options[j], options[i]];
+            }
+            currentQuestion = {
+                description: measure.resume,
+                correctTitle: correctTitle,
+                options: options,
+                measureId: measure.id
+            };
+            currentAnswer = null;
+            waitingForNext = false;
+            
+            // Affichage
+            document.getElementById('questionText').innerHTML = `📖 ${currentQuestion.description}`;
+            const optionsContainer = document.getElementById('optionsContainer');
+            optionsContainer.innerHTML = '';
+            currentQuestion.options.forEach(opt => {
+                const btn = document.createElement('button');
+                btn.className = 'option-btn';
+                btn.textContent = opt;
+                btn.addEventListener('click', () => checkAnswer(opt, btn));
+                optionsContainer.appendChild(btn);
+            });
+            document.getElementById('feedback').innerHTML = '';
+            document.getElementById('nextBtn').style.display = 'none';
+            document.getElementById('scoreDisplay').innerHTML = `Score : ${score} / ${questionsAnswered}`;
+        }
+        
+        function checkAnswer(selected, btnElement) {
+            if (waitingForNext) return;
+            waitingForNext = true;
+            const isCorrect = (selected === currentQuestion.correctTitle);
+            questionsAnswered++;
+            if (isCorrect) {
+                score++;
+                document.getElementById('feedback').innerHTML = '<div class="feedback correct-feedback">✅ Bonne réponse !</div>';
+            } else {
+                document.getElementById('feedback').innerHTML = `<div class="feedback wrong-feedback">❌ Mauvaise réponse. La bonne réponse était : "${currentQuestion.correctTitle}".</div>`;
+            }
+            // Colorer les boutons
+            const allBtns = document.querySelectorAll('.option-btn');
+            allBtns.forEach(btn => {
+                if (btn.textContent === currentQuestion.correctTitle) {
+                    btn.classList.add('correct');
+                } else if (btn === btnElement && btn.textContent !== currentQuestion.correctTitle) {
+                    btn.classList.add('wrong');
+                }
+                btn.disabled = true;
+            });
+            document.getElementById('scoreDisplay').innerHTML = `Score : ${score} / ${questionsAnswered}`;
+            document.getElementById('nextBtn').style.display = 'block';
+        }
+        
+        function nextQuestion() {
+            if (!waitingForNext) return;
+            generateQuestion();
+        }
+        
+        // Initialisation
+        if (!mesures.length) {
+            document.getElementById('questionText').innerHTML = "❌ Base de données non chargée. Vérifiez data.js";
+        } else {
+            generateQuestion();
+            document.getElementById('nextBtn').addEventListener('click', nextQuestion);
+        }
+    </script>
+</body>
+</html>
