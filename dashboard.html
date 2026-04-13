@@ -1,0 +1,364 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tableau de bord comparatif – HCC / PNACC / SNBC</title>
+    <link rel="stylesheet" href="css/style.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+    <style>
+        body {
+            background: #f5f7fa;
+        }
+        .dashboard-container {
+            max-width: 1200px;
+            margin: 2rem auto;
+            padding: 1rem;
+        }
+        .total-card {
+            background: linear-gradient(135deg, #1a5d8f, #0e3a5a);
+            color: white;
+            padding: 1.5rem;
+            border-radius: 20px;
+            margin-bottom: 2rem;
+        }
+        .total-card h2 {
+            margin: 0 0 1rem 0;
+            font-size: 1.5rem;
+        }
+        .totals-row {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 2rem;
+            justify-content: space-between;
+        }
+        .total-item {
+            flex: 1;
+            text-align: center;
+            background: rgba(255,255,255,0.15);
+            border-radius: 16px;
+            padding: 1rem;
+        }
+        .total-item .label {
+            font-size: 0.9rem;
+            opacity: 0.9;
+            margin-bottom: 0.5rem;
+        }
+        .total-item .amount {
+            font-size: 2rem;
+            font-weight: bold;
+        }
+        .comparison-section {
+            background: white;
+            border-radius: 20px;
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+        }
+        .section-title {
+            font-size: 1.5rem;
+            margin-bottom: 1rem;
+            border-left: 5px solid #2b9e4a;
+            padding-left: 1rem;
+        }
+        .chart-container {
+            max-width: 600px;
+            margin: 0 auto;
+        }
+        .three-col {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1.5rem;
+            margin-top: 1rem;
+        }
+        .report-card {
+            flex: 1;
+            background: #f8f9fa;
+            border-radius: 16px;
+            padding: 1rem;
+            border-top: 4px solid;
+        }
+        .report-card.hcc { border-top-color: #1a5d8f; }
+        .report-card.pnacc { border-top-color: #2b9e4a; }
+        .report-card.snbc { border-top-color: #e67e22; }
+        .report-title {
+            font-size: 1.3rem;
+            font-weight: bold;
+            margin-bottom: 0.5rem;
+        }
+        .report-stats {
+            display: flex;
+            justify-content: space-between;
+            margin: 1rem 0;
+        }
+        .stat-badge {
+            text-align: center;
+            background: white;
+            border-radius: 12px;
+            padding: 0.5rem;
+            flex: 1;
+            margin: 0 0.2rem;
+        }
+        .stat-number {
+            font-size: 1.6rem;
+            font-weight: bold;
+        }
+        .good { color: #155724; background: #d4edda; }
+        .partial { color: #856404; background: #fff3cd; }
+        .none { color: #721c24; background: #f8d7da; }
+        .uncovered-list {
+            margin-top: 1rem;
+            max-height: 200px;
+            overflow-y: auto;
+            font-size: 0.8rem;
+        }
+        .uncovered-item {
+            padding: 0.3rem 0;
+            border-bottom: 1px solid #dee2e6;
+        }
+        footer {
+            text-align: center;
+            margin-top: 2rem;
+            padding: 1rem;
+            color: #6c757d;
+        }
+        .warning {
+            background: #fff3cd;
+            border-left: 5px solid #ffc107;
+            padding: 1rem;
+            margin-bottom: 2rem;
+            border-radius: 8px;
+        }
+        @media (max-width: 768px) {
+            .three-col { flex-direction: column; }
+            .totals-row { flex-direction: column; gap: 1rem; }
+        }
+    </style>
+</head>
+<body>
+    <script src="js/nav.js"></script>
+
+    <div class="dashboard-container">
+        <div class="warning">
+            ⚠️ <strong>Tableau de bord comparatif – méthode lexicale simple</strong><br>
+            Ce tableau agrège automatiquement les résultats des confrontations entre le programme et trois référentiels : HCC (climat et territoires), PNACC3 (adaptation), SNBC3 (neutralité carbone). Les scores sont basés sur la présence de mots-clés communs. Il s’agit d’une expérience pédagogique, pas d’une analyse politique définitive.
+        </div>
+
+        <div id="dashboardContent">
+            <div style="text-align: center;">Chargement des données...</div>
+        </div>
+
+        <footer>
+            🔍 Méthode : correspondance lexicale entre les champs <code>secteurs</code> des rapports et les champs <code>motscles, titre, resume, categorie</code> des mesures.<br>
+            Données : <a href="js/data.js">data.js</a> (1000+ mesures) + <a href="js/hcc_recommendations.js">hcc_recommendations.js</a> (32) + <a href="js/pnacc_measures.js">pnacc_measures.js</a> (52) + <a href="js/snbc_measures.js">snbc_measures.js</a> (32).
+        </footer>
+    </div>
+
+    <script src="js/data.js"></script>
+    <script src="js/hcc_recommendations.js"></script>
+    <script src="js/pnacc_measures.js"></script>
+    <script src="js/snbc_measures.js"></script>
+    <script>
+        (function() {
+            // Vérification des chargements
+            if (typeof mesures === 'undefined' || !mesures.length) {
+                document.getElementById('dashboardContent').innerHTML = '<div class="warning">❌ Base de données des mesures non chargée.</div>';
+                return;
+            }
+            if (typeof hccRecommendations === 'undefined' || typeof pnaccMeasures === 'undefined' || typeof snbcMeasures === 'undefined') {
+                document.getElementById('dashboardContent').innerHTML = '<div class="warning">❌ Un ou plusieurs fichiers de rapports sont manquants.</div>';
+                return;
+            }
+
+            // === Fonction de scoring lexicale (identique à lab-hcc) ===
+            function computeMatches(list, label) {
+                return list.map(item => {
+                    const matches = [];
+                    for (let measure of mesures) {
+                        let score = 0;
+                        const textToSearch = (measure.titre + ' ' + (measure.resume || '') + ' ' + (measure.motscles || []).join(' ') + ' ' + (measure.categorie || '')).toLowerCase();
+                        const itemSectors = (item.secteurs || []).join(' ').toLowerCase();
+                        const sectorsArray = (item.secteurs || []).map(s => s.toLowerCase());
+                        for (let s of sectorsArray) {
+                            if (textToSearch.includes(s)) score += 2;
+                        }
+                        // Bonus si catégorie correspond
+                        if (item.secteurs && item.secteurs.some(s => measure.categorie === s)) score += 3;
+                        if (score > 0) {
+                            matches.push({
+                                id: measure.id,
+                                titre: measure.titre,
+                                categorie: measure.categorie,
+                                score: score
+                            });
+                        }
+                    }
+                    matches.sort((a,b) => b.score - a.score);
+                    const topMatches = matches.slice(0,5);
+                    const status = topMatches.length === 0 ? 'none' : (topMatches[0].score >= 3 ? 'good' : 'partial');
+                    return { ...item, matches: topMatches, status, score: (topMatches[0]?.score || 0) };
+                });
+            }
+
+            // Calcul des résultats pour chaque référentiel
+            const hccResults = computeMatches(hccRecommendations, 'HCC');
+            const pnaccResults = computeMatches(pnaccMeasures, 'PNACC');
+            const snbcResults = computeMatches(snbcMeasures, 'SNBC');
+
+            // Statistiques par référentiel
+            function getStats(results) {
+                const total = results.length;
+                const good = results.filter(r => r.status === 'good').length;
+                const partial = results.filter(r => r.status === 'partial').length;
+                const none = results.filter(r => r.status === 'none').length;
+                const coverage = Math.round((good + partial) / total * 100);
+                return { total, good, partial, none, coverage };
+            }
+
+            const hccStats = getStats(hccResults);
+            const pnaccStats = getStats(pnaccResults);
+            const snbcStats = getStats(snbcResults);
+
+            // Agrégation par catégorie (thème) – à partir des secteurs ou d'une cartographie simple
+            function getCategoryFromItem(item) {
+                // On prend le premier secteur significatif ou on essaie de mapper
+                const sect = (item.secteurs || []);
+                if (sect.includes('transport') || sect.includes('mobilité')) return 'Transports';
+                if (sect.includes('énergie')) return 'Énergie';
+                if (sect.includes('agriculture')) return 'Agriculture';
+                if (sect.includes('bâtiment') || sect.includes('logement')) return 'Bâtiment / Logement';
+                if (sect.includes('forêt')) return 'Forêt';
+                if (sect.includes('eau')) return 'Eau';
+                if (sect.includes('santé')) return 'Santé';
+                if (sect.includes('industrie')) return 'Industrie';
+                if (sect.includes('déchets')) return 'Déchets';
+                if (sect.includes('prévention') || sect.includes('inondation')) return 'Risques / Adaptation';
+                if (sect.includes('gouvernance')) return 'Gouvernance';
+                return 'Autres';
+            }
+
+            // Calcul du score moyen par catégorie pour chaque référentiel
+            function averageScoreByCategory(results) {
+                const catMap = new Map();
+                for (let r of results) {
+                    const cat = getCategoryFromItem(r);
+                    if (!catMap.has(cat)) catMap.set(cat, { totalScore: 0, count: 0 });
+                    const data = catMap.get(cat);
+                    data.totalScore += r.score;
+                    data.count++;
+                }
+                const averages = {};
+                for (let [cat, data] of catMap.entries()) {
+                    averages[cat] = data.totalScore / data.count;
+                }
+                return averages;
+            }
+
+            const hccCatAvg = averageScoreByCategory(hccResults);
+            const pnaccCatAvg = averageScoreByCategory(pnaccResults);
+            const snbcCatAvg = averageScoreByCategory(snbcResults);
+
+            // Rassembler toutes les catégories uniques
+            const allCategories = new Set([...Object.keys(hccCatAvg), ...Object.keys(pnaccCatAvg), ...Object.keys(snbcCatAvg)]);
+            const sortedCategories = Array.from(allCategories).sort();
+
+            // Préparer les données pour le graphique radar (ou barres)
+            const chartLabels = sortedCategories;
+            const hccData = chartLabels.map(cat => hccCatAvg[cat] || 0);
+            const pnaccData = chartLabels.map(cat => pnaccCatAvg[cat] || 0);
+            const snbcData = chartLabels.map(cat => snbcCatAvg[cat] || 0);
+
+            // Génération HTML
+            let html = `
+                <div class="total-card">
+                    <h2>📊 Vue d’ensemble – Couverture du programme</h2>
+                    <div class="totals-row">
+                        <div class="total-item"><div class="label">📋 Recommandations HCC</div><div class="amount">${hccStats.total}</div><div class="note">${hccStats.good} ✓ / ${hccStats.partial} 🟡 / ${hccStats.none} ❌</div></div>
+                        <div class="total-item"><div class="label">📋 Mesures PNACC3</div><div class="amount">${pnaccStats.total}</div><div class="note">${pnaccStats.good} ✓ / ${pnaccStats.partial} 🟡 / ${pnaccStats.none} ❌</div></div>
+                        <div class="total-item"><div class="label">📋 Objectifs SNBC3</div><div class="amount">${snbcStats.total}</div><div class="note">${snbcStats.good} ✓ / ${snbcStats.partial} 🟡 / ${snbcStats.none} ❌</div></div>
+                    </div>
+                    <div class="totals-row" style="margin-top:1rem">
+                        <div class="total-item"><div class="label">📊 Taux de couverture (bonne + partielle)</div><div class="amount">HCC ${hccStats.coverage}% &nbsp;&nbsp; PNACC ${pnaccStats.coverage}% &nbsp;&nbsp; SNBC ${snbcStats.coverage}%</div></div>
+                    </div>
+                </div>
+            `;
+
+            // Graphique comparatif par catégorie (barres)
+            html += `
+                <div class="comparison-section">
+                    <div class="section-title">📊 Score moyen par catégorie (plus le score est élevé, meilleure est la couverture)</div>
+                    <canvas id="categoryChart" width="800" height="400" style="max-width:100%; height:auto;"></canvas>
+                    <div class="warning" style="margin-top:1rem; font-size:0.8rem;">
+                        💡 <strong>Interprétation</strong> : le score est la somme des poids des mots-clés trouvés (2 points par mot-clé, +3 si catégorie correspond). Un score ≥3 est considéré comme "bonne correspondance". Le score moyen par catégorie donne une idée de l’intensité de la couverture.
+                    </div>
+                </div>
+            `;
+
+            // Détail par référentiel
+            html += `<div class="three-col">`;
+
+            function renderReportCard(title, results, stats, colorClass) {
+                const uncovered = results.filter(r => r.status === 'none');
+                return `
+                    <div class="report-card ${colorClass}">
+                        <div class="report-title">${title}</div>
+                        <div class="report-stats">
+                            <div class="stat-badge good"><div class="stat-number">${stats.good}</div><div>Bonnes</div></div>
+                            <div class="stat-badge partial"><div class="stat-number">${stats.partial}</div><div>Partielles</div></div>
+                            <div class="stat-badge none"><div class="stat-number">${stats.none}</div><div>Non couvertes</div></div>
+                        </div>
+                        <div><strong>🔍 Entités non couvertes</strong> (${uncovered.length})</div>
+                        <div class="uncovered-list">
+                            ${uncovered.slice(0,10).map(u => `<div class="uncovered-item">${u.title || u.text?.substring(0,80) || `Recommandation n°${u.id}`}</div>`).join('')}
+                            ${uncovered.length > 10 ? `<div class="uncovered-item">... et ${uncovered.length-10} autres</div>` : ''}
+                        </div>
+                        <div style="margin-top:0.8rem; font-size:0.7rem; text-align:right;">
+                            <a href="lab-${title.toLowerCase()}.html">→ Voir le détail complet</a>
+                        </div>
+                    </div>
+                `;
+            }
+
+            html += renderReportCard('HCC', hccResults, hccStats, 'hcc');
+            html += renderReportCard('PNACC', pnaccResults, pnaccStats, 'pnacc');
+            html += renderReportCard('SNBC', snbcResults, snbcStats, 'snbc');
+            html += `</div>`;
+
+            html += `<div class="warning" style="margin-top:2rem;">
+                        📌 <strong>Limites de l’analyse</strong> : 
+                        <ul style="margin: 0.5rem 0 0 1.5rem;">
+                            <li>L’appariement est purement lexical (mots-clés). Une recommandation peut être traitée sans utiliser exactement les mêmes termes.</li>
+                            <li>Les scores ne sont pas comparables entre référentiels car la granularité diffère (HCC = 32, PNACC = 52, SNBC = 32).</li>
+                            <li>Ce tableau de bord est une <strong>expérience pédagogique</strong> pour visualiser rapidement les convergences et les lacunes.</li>
+                        </ul>
+                    </div>`;
+
+            document.getElementById('dashboardContent').innerHTML = html;
+
+            // Dessiner le graphique en barres avec Chart.js
+            const ctx = document.getElementById('categoryChart').getContext('2d');
+            new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: chartLabels,
+                    datasets: [
+                        { label: 'HCC', data: hccData, backgroundColor: '#1a5d8f80', borderColor: '#1a5d8f', borderWidth: 1 },
+                        { label: 'PNACC', data: pnaccData, backgroundColor: '#2b9e4a80', borderColor: '#2b9e4a', borderWidth: 1 },
+                        { label: 'SNBC', data: snbcData, backgroundColor: '#e67e2280', borderColor: '#e67e22', borderWidth: 1 }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: true,
+                    scales: {
+                        y: { beginAtZero: true, title: { display: true, text: 'Score moyen' } }
+                    },
+                    plugins: {
+                        tooltip: { callbacks: { label: (ctx) => `${ctx.dataset.label} : ${ctx.raw.toFixed(1)} points` } }
+                    }
+                }
+            });
+        })();
+    </script>
+</body>
+</html>
