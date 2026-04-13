@@ -1,5 +1,5 @@
 // data.js - Base de données complète du programme L'Avenir en commun
-// Version 1.0 - 50 mesures prioritaires
+// Version 3.0 - 1000 mesures 
 
 const mesures = [
   // === TRAVAIL & RETRAITE (10) ===
