@@ -7,16 +7,27 @@
     <link rel="stylesheet" href="css/style.css">
     <style>
         /* Styles spécifiques à la page d'accueil */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            background: #f5f7fa;
+            font-family: system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif;
+            line-height: 1.5;
+        }
         .hero {
             background: linear-gradient(135deg, #1a5d8f 0%, #0e3a5a 100%);
             color: white;
             padding: 3rem 1rem;
             text-align: center;
-            margin-bottom: 2rem;
+            margin-bottom: 1.5rem;
         }
         .hero h1 {
             font-size: 2.2rem;
             margin-bottom: 1rem;
+            font-weight: 700;
         }
         .hero p {
             font-size: 1.1rem;
@@ -24,11 +35,49 @@
             margin: 0 auto;
             opacity: 0.9;
         }
+        .stats-bar {
+            background: rgba(255,255,255,0.15);
+            backdrop-filter: blur(4px);
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 2rem;
+            margin-top: 2rem;
+            padding: 1rem;
+            border-radius: 60px;
+            max-width: 800px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+        .stat-item {
+            text-align: center;
+        }
+        .stat-number {
+            font-size: 1.8rem;
+            font-weight: bold;
+            line-height: 1;
+        }
+        .stat-label {
+            font-size: 0.8rem;
+            opacity: 0.8;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 1rem;
+        }
         .section-title {
             font-size: 1.8rem;
             margin: 2rem 0 1rem;
             border-left: 5px solid #2b9e4a;
             padding-left: 1rem;
+            font-weight: 600;
+        }
+        .section-subtitle {
+            font-size: 1.2rem;
+            color: #2c3e50;
+            margin: -0.5rem 0 1rem 1.5rem;
+            font-weight: normal;
         }
         .cards-grid {
             display: grid;
@@ -38,7 +87,7 @@
         }
         .card {
             background: white;
-            border-radius: 20px;
+            border-radius: 24px;
             padding: 1.5rem;
             box-shadow: 0 4px 12px rgba(0,0,0,0.08);
             transition: transform 0.2s, box-shadow 0.2s;
@@ -51,7 +100,7 @@
             box-shadow: 0 12px 24px rgba(0,0,0,0.12);
         }
         .card-icon {
-            font-size: 2rem;
+            font-size: 2.2rem;
             margin-bottom: 0.75rem;
         }
         .card-title {
@@ -63,23 +112,47 @@
         .card-desc {
             color: #4a5568;
             line-height: 1.4;
+            font-size: 0.9rem;
+        }
+        .badge-new {
+            background: #2b9e4a;
+            color: white;
+            font-size: 0.7rem;
+            padding: 0.2rem 0.6rem;
+            border-radius: 20px;
+            display: inline-block;
+            margin-top: 0.75rem;
+        }
+        .programme-highlight {
+            background: #eef2f5;
+            border-radius: 28px;
+            padding: 1.5rem;
+            margin: 1rem 0;
         }
         .shuffler {
-            background: #f8f9fa;
-            border-radius: 20px;
+            background: #ffffff;
+            border-radius: 24px;
             padding: 1.5rem;
             text-align: center;
-            margin: 1.5rem 0;
+            margin-top: 1.5rem;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+            border: 1px solid #e2e8f0;
+        }
+        .shuffler h3 {
+            margin-bottom: 0.5rem;
+            color: #1a5d8f;
         }
         .shuffler button {
             background: #2b9e4a;
             color: white;
             border: none;
-            padding: 0.75rem 1.5rem;
+            padding: 0.7rem 1.8rem;
             font-size: 1rem;
             border-radius: 40px;
             cursor: pointer;
             transition: background 0.2s;
+            font-weight: 500;
+            margin: 0.5rem 0;
         }
         .shuffler button:hover {
             background: #1e6b34;
@@ -87,29 +160,37 @@
         .random-measure {
             margin-top: 1rem;
             padding: 1rem;
-            background: white;
-            border-radius: 16px;
+            background: #f8fafc;
+            border-radius: 20px;
             text-align: left;
             display: none;
+            border-left: 4px solid #2b9e4a;
         }
         .random-measure h4 {
             color: #1a5d8f;
             margin-bottom: 0.5rem;
+            font-size: 1.1rem;
         }
-        .badge {
+        .badge-cat {
             background: #e9ecef;
             padding: 0.2rem 0.6rem;
             border-radius: 20px;
+            font-size: 0.75rem;
+            display: inline-block;
+            margin: 0.5rem 0;
+        }
+        .btn-small {
+            background: #1a5d8f;
+            color: white;
+            padding: 0.4rem 1rem;
+            border-radius: 30px;
+            text-decoration: none;
             font-size: 0.8rem;
             display: inline-block;
-            margin-top: 0.5rem;
+            transition: background 0.2s;
         }
-        footer {
-            text-align: center;
-            margin-top: 3rem;
-            padding: 1rem;
-            color: #6c757d;
-            border-top: 1px solid #dee2e6;
+        .btn-small:hover {
+            background: #0e3a5a;
         }
         .two-col-links {
             display: flex;
@@ -136,13 +217,19 @@
             background: #1a5d8f;
             color: white;
         }
-        .btn:hover {
-            background: #0e3a5a;
+        footer {
+            text-align: center;
+            margin-top: 3rem;
+            padding: 1.5rem;
+            color: #6c757d;
+            border-top: 1px solid #dee2e6;
+            font-size: 0.85rem;
         }
-        .container {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 0 1rem;
+        @media (max-width: 768px) {
+            .hero h1 { font-size: 1.6rem; }
+            .section-title { font-size: 1.4rem; }
+            .stats-bar { gap: 1rem; }
+            .stat-number { font-size: 1.3rem; }
         }
     </style>
 </head>
@@ -153,45 +240,43 @@
         <div class="container">
             <h1>🌱 Décoder, comparer, agir</h1>
             <p>SOLARPUNK/France2100 vulgarise les propositions politiques et les confronte aux rapports d’experts (climat, budget, justice sociale). Un laboratoire citoyen pour une démocratie plus éclairée.</p>
+            <div class="stats-bar">
+                <div class="stat-item"><div class="stat-number" id="statMeasures">1000+</div><div class="stat-label">mesures vulgarisées</div></div>
+                <div class="stat-item"><div class="stat-number">18</div><div class="stat-label">catégories</div></div>
+                <div class="stat-item"><div class="stat-number" id="statReports">4</div><div class="stat-label">rapports confrontés</div></div>
+                <div class="stat-item"><div class="stat-number">🔓</div><div class="stat-label">100% open data</div></div>
+            </div>
         </div>
     </div>
 
     <div class="container">
-       <!-- Section Découvrir le programme -->
-<div class="section-title">📋 Découvrir le programme</div>
-<div class="cards-grid">
-    <a href="programme.html" class="card">
-        <div class="card-icon">📚</div>
-        <div class="card-title">1000 mesures vulgarisées</div>
-        <div class="card-desc">Consultez l’intégralité des propositions classées par thème, avec recherche et pagination.</div>
-    </a>
-</div>
+        <!-- SECTION PROGRAMME -->
+        <div class="section-title">📋 Le programme – 1000+ mesures</div>
+        <div class="cards-grid">
+            <a href="programme.html" class="card">
+                <div class="card-icon">📚</div>
+                <div class="card-title">Explorer toutes les mesures</div>
+                <div class="card-desc">Parcourez l’intégralité des propositions classées par thème (travail, écologie, santé, éducation, logement…). Recherche et pagination incluses.</div>
+                <span class="badge-new">Accès direct</span>
+            </a>
+        </div>
 
-        <!-- Mini outil : mesure au hasard -->
+        <!-- Mini-jeu : mesure au hasard (intégré à la section programme) -->
         <div class="shuffler">
             <h3>🎲 Une mesure au hasard</h3>
-            <p>Découvrez une proposition aléatoire du programme.</p>
+            <p>Découvrez une proposition aléatoire du programme. Cliquez pour piocher.</p>
             <button id="randomBtn">🍀 Mélanger et piocher</button>
             <div id="randomResult" class="random-measure"></div>
         </div>
 
-        <!-- Section Le Lab -->
+        <!-- SECTION LAB – Outils interactifs -->
         <div class="section-title">🔬 Le Lab – Expérimentations citoyennes</div>
+        <div class="section-subtitle">🧰 Outils interactifs</div>
         <div class="cards-grid">
-            <a href="budget.html" class="card">
-                <div class="card-icon">💰</div>
-                <div class="card-title">Analyse budgétaire</div>
-                <div class="card-desc">Extraction automatique des montants et visualisation du financement des mesures.</div>
-            </a>
-            <a href="lab-hcc.html" class="card">
-                <div class="card-icon">🌡️</div>
-                <div class="card-title">Confrontation HCC</div>
-                <div class="card-desc">Notre programme face aux 32 recommandations du Haut Conseil pour le Climat.</div>
-            </a>
             <a href="chatbot.html" class="card">
                 <div class="card-icon">🤖</div>
                 <div class="card-title">Chatbot programmatique</div>
-                <div class="card-desc">Posez vos questions, obtenez des réponses simples et documentées.</div>
+                <div class="card-desc">Posez vos questions sur le programme, obtenez des explications simples et des citations.</div>
             </a>
             <a href="quizz.html" class="card">
                 <div class="card-icon">📝</div>
@@ -200,7 +285,53 @@
             </a>
         </div>
 
-        <!-- Section Pourquoi ce site ? -->
+        <div class="section-subtitle">📊 Comparateurs de politiques publiques</div>
+        <div class="cards-grid">
+            <a href="dashboard.html" class="card">
+                <div class="card-icon">📈</div>
+                <div class="card-title">Tableau de bord comparatif</div>
+                <div class="card-desc">Agrège les résultats des confrontations HCC, PNACC, SNBC et Cour des comptes. Vue synthétique et scores par catégorie.</div>
+                <span class="badge-new">Recommandé</span>
+            </a>
+            <a href="lab-hcc.html" class="card">
+                <div class="card-icon">🌡️</div>
+                <div class="card-title">Haut Conseil pour le Climat (HCC)</div>
+                <div class="card-desc">32 recommandations du rapport 2026 sur les territoires et le climat.</div>
+            </a>
+            <a href="lab-pnacc.html" class="card">
+                <div class="card-icon">🌊</div>
+                <div class="card-title">PNACC3 – Adaptation +4°C</div>
+                <div class="card-desc">52 mesures du 3ème plan national d’adaptation au changement climatique.</div>
+            </a>
+            <a href="lab-snbc.html" class="card">
+                <div class="card-icon">📉</div>
+                <div class="card-title">SNBC3 – Neutralité carbone</div>
+                <div class="card-desc">32 objectifs de la stratégie nationale bas-carbone.</div>
+            </a>
+            <a href="lab-cdc.html" class="card">
+                <div class="card-icon">🏛️</div>
+                <div class="card-title">Cour des comptes – RPA 2026</div>
+                <div class="card-desc">44 recommandations sur la santé, l’éducation, le logement, les mobilités, la sécurité, les finances locales…</div>
+                <span class="badge-new">Nouveau</span>
+            </a>
+        </div>
+
+        <div class="section-subtitle">💰 Analyse budgétaire</div>
+        <div class="cards-grid">
+            <a href="budget.html" class="card">
+                <div class="card-icon">📊</div>
+                <div class="card-title">Budget estimé du programme</div>
+                <div class="card-desc">Extraction automatique des montants et visualisation des financements par thème.</div>
+            </a>
+            <a href="lab-budget-cdc.html" class="card">
+                <div class="card-icon">⚖️💰</div>
+                <div class="card-title">Comparateur budgétaire</div>
+                <div class="card-desc">Confrontation des budgets du programme avec les estimations et besoins chiffrés de la Cour des comptes.</div>
+                <span class="badge-new">Expérimental</span>
+            </a>
+        </div>
+
+        <!-- SECTION POURQUOI CE SITE ? -->
         <div class="section-title">💡 Pourquoi ce site ?</div>
         <div class="cards-grid">
             <div class="card" style="cursor: default;">
@@ -219,14 +350,27 @@
                 <div class="card-desc">Nouveaux comparateurs, nouveaux rapports, amélioration continue – une plateforme évolutive.</div>
             </div>
         </div>
+
+        <!-- Contact (simple lien mail) -->
+        <div style="text-align: center; margin: 2rem 0 1rem;">
+            <a href="mailto:me@pauliglesia.com" class="btn btn-outline">✉️ Une idée, une suggestion ? Contactez‑moi</a>
+        </div>
     </div>
 
     <footer>
-        ⚡ Projet citoyen et expérimental – Les données sont issues du programme « L’Avenir en commun ». Les analyses automatiques sont indicatives.
+        ⚡ Projet citoyen et expérimental – Les données sont issues du programme « L’Avenir en commun ». Les analyses automatiques sont indicatives.<br>
+        <a href="a-propos.html" style="color: #1a5d8f;">À propos du projet</a>
     </footer>
 
     <script src="js/data.js"></script>
     <script>
+        // Mise à jour du compteur de mesures (statique mais dynamique via data.js)
+        if (typeof mesures !== 'undefined' && mesures.length) {
+            document.getElementById('statMeasures').innerHTML = mesures.length + '+';
+        }
+        // Compteur de rapports (4 actuellement)
+        document.getElementById('statReports').innerHTML = '4';
+
         // Gestionnaire de mesure au hasard
         const randomBtn = document.getElementById('randomBtn');
         const randomResultDiv = document.getElementById('randomResult');
@@ -237,6 +381,21 @@
             return mesures[randomIndex];
         }
         
+        // Mapping des catégories pour l'affichage
+        const categorieLabels = {
+            "travail": "👔 Travail", "ecologie": "🌿 Écologie", "sante": "🏥 Santé",
+            "education": "📚 Éducation", "logement": "🏠 Logement", "democratie": "🗳️ Démocratie",
+            "economie": "💰 Économie", "international": "🌍 International", "outremer": "🏝️ Outre‑mer",
+            "migrations": "🚶 Migrations", "egalite": "🤝 Égalité", "transports": "🚆 Transports",
+            "numerique": "💻 Numérique", "defense": "🛡️ Défense", "europe": "🇪🇺 Europe",
+            "culture": "🎭 Culture", "sport": "⚽ Sport", "handicap": "♿ Handicap",
+            "banques": "🏦 Banques", "energie": "⚡ Énergie", "espace": "🚀 Espace",
+            "mer": "🌊 Mer", "foret": "🌲 Forêt", "condition_animale": "🐾 Condition animale",
+            "quartiers_populaires": "🏙️ Quartiers populaires", "enfance": "🧸 Enfance",
+            "medias": "📺 Médias", "antiracisme": "✊ Antiracisme", "ess": "🤝 ESS",
+            "jeunesse": "🧑‍🎓 Jeunesse"
+        };
+        
         function displayRandomMeasure() {
             const measure = getRandomMeasure();
             if (!measure) {
@@ -244,32 +403,19 @@
                 randomResultDiv.style.display = 'block';
                 return;
             }
-            const categorieLabels = {
-                "travail": "👔 Travail", "ecologie": "🌿 Écologie", "sante": "🏥 Santé",
-                "education": "📚 Éducation", "logement": "🏠 Logement", "democratie": "🗳️ Démocratie",
-                "economie": "💰 Économie", "international": "🌍 International", "outremer": "🏝️ Outre‑mer",
-                "migrations": "🚶 Migrations", "egalite": "🤝 Égalité", "transports": "🚆 Transports",
-                "numerique": "💻 Numérique", "defense": "🛡️ Défense", "europe": "🇪🇺 Europe",
-                "culture": "🎭 Culture", "sport": "⚽ Sport", "handicap": "♿ Handicap",
-                "banques": "🏦 Banques", "energie": "⚡ Énergie", "espace": "🚀 Espace",
-                "mer": "🌊 Mer", "foret": "🌲 Forêt", "condition_animale": "🐾 Condition animale",
-                "quartiers_populaires": "🏙️ Quartiers populaires", "enfance": "🧸 Enfance",
-                "medias": "📺 Médias", "antiracisme": "✊ Antiracisme", "ess": "🤝 ESS",
-                "jeunesse": "🧑‍🎓 Jeunesse"
-            };
             const catName = categorieLabels[measure.categorie] || measure.categorie;
+            // Utilisation de mesure.html?id=... plutôt que measure.url
+            const detailUrl = `mesure.html?id=${measure.id}`;
             randomResultDiv.innerHTML = `
                 <h4>${measure.titre}</h4>
                 <p>${measure.resume || 'Aucun résumé disponible.'}</p>
-                <div><span class="badge">${catName}</span></div>
-                <div style="margin-top: 0.5rem;"><a href="${measure.url || '#'}" class="btn" style="font-size:0.8rem;">🔍 Voir le détail</a></div>
+                <div><span class="badge-cat">${catName}</span></div>
+                <div style="margin-top: 0.75rem;"><a href="${detailUrl}" class="btn-small">🔍 Lire la mesure complète</a></div>
             `;
             randomResultDiv.style.display = 'block';
         }
         
         randomBtn.addEventListener('click', displayRandomMeasure);
-        
-     
     </script>
 </body>
 </html>
