@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lab · Comparateur budgétaire – Programme vs Cour des comptes</title>
+    <link rel="stylesheet" href="css/style.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+    <style>
+        body { background: #f5f7fa; }
+        .lab-container { max-width: 1200px; margin: 2rem auto; padding: 1rem; }
+        .warning { background: #fff3cd; border-left: 5px solid #ffc107; padding: 1rem; margin-bottom: 2rem; border-radius: 8px; }
+        .comparison-table { width: 100%; border-collapse: collapse; background: white; border-radius: 16px; overflow: hidden; box-shadow: 0 2px 10px rgba(0,0,0,0.05); }
+        .comparison-table th, .comparison-table td { padding: 0.75rem 1rem; text-align: left; border-bottom: 1px solid #dee2e6; vertical-align: top; }
+        .comparison-table th { background: #1a5d8f; color: white; }
+        .comparison-table tr:hover { background: #f1f3f5; }
+        .badge-program { background: #2b9e4a; color: white; padding: 0.2rem 0.5rem; border-radius: 20px; font-size: 0.7rem; display: inline-block; }
+        .badge-cdc { background: #8e44ad; color: white; padding: 0.2rem 0.5rem; border-radius: 20px; font-size: 0.7rem; display: inline-block; }
+        .amount { font-weight: bold; }
+        .note { font-size: 0.75rem; color: #6c757d; margin-top: 0.2rem; }
+        .section-title { font-size: 1.5rem; margin: 1.5rem 0 1rem; border-left: 5px solid #2b9e4a; padding-left: 1rem; }
+        footer { text-align: center; margin-top: 2rem; padding: 1rem; color: #6c757d; }
+        @media (max-width: 768px) { .comparison-table th, .comparison-table td { display: block; width: 100%; } }
+    </style>
+</head>
+<body>
+    <script src="js/nav.js"></script>
+    <div class="lab-container">
+        <div class="warning">
+            ⚠️ <strong>Comparateur budgétaire expérimental</strong><br>
+            Ce laboratoire confronte les estimations budgétaires du programme « L’Avenir en commun » (issues de <code>data.js</code>) avec les constats et besoins chiffrés de la Cour des comptes (RPA 2026). Les montants sont annualisés quand c’est possible. Il ne s’agit pas d’une analyse définitive mais d’une première approche pour visualiser les écarts.
+        </div>
+
+        <div id="comparisonContent">
+            <div style="text-align: center;">Chargement des données...</div>
+        </div>
+        <footer>
+            🔍 Sources : <a href="js/data.js">data.js</a> (programme) et <a href="js/cdc_budget_data.js">cdc_budget_data.js</a> (Cour des comptes).<br>
+            Les montants du programme sont annualisés à partir du champ <code>financement</code> (extraction automatique). Les chiffres de la Cour sont extraits manuellement du rapport.
+        </footer>
+    </div>
+
+    <script src="js/data.js"></script>
+    <script src="js/cdc_budget_data.js"></script>
+    <script>
+        (function() {
+            if (typeof mesures === 'undefined' || !mesures.length) {
+                document.getElementById('comparisonContent').innerHTML = '<div class="warning">❌ Base de données des mesures non chargée.</div>';
+                return;
+            }
+            if (typeof cdcBudgetData === 'undefined') {
+                document.getElementById('comparisonContent').innerHTML = '<div class="warning">❌ Données budgétaires de la Cour des comptes non chargées.</div>';
+                return;
+            }
+
+            // Extraire les budgets annualisés du programme par catégorie (similaire à budget.html)
+            function extractProgramBudget() {
+                const catMap = new Map(); // cat -> annualized sum
+                for (const m of mesures) {
+                    const text = m.financement || '';
+                    const amountRegex = /(\d+(?:[.,]\d+)?)\s*(milliards?|millions?)\s*d'?euros?/i;
+                    const amountMatch = text.match(amountRegex);
+                    if (!amountMatch) continue;
+                    let value = parseFloat(amountMatch[1].replace(',', '.'));
+                    const unit = amountMatch[2].toLowerCase();
+                    if (unit.startsWith('milliard')) value *= 1e9;
+                    else if (unit.startsWith('million')) value *= 1e6;
+                    // Annualisation simple
+                    let annualized = value;
+                    if (/\bpar\s*an\b|\/an\b/i.test(text)) {
+                        annualized = value;
+                    } else {
+                        const periodMatch = text.match(/sur\s+(\d+(?:[.,]\d+)?)\s*(?:années?|ans)/i);
+                        if (periodMatch) {
+                            const years = parseFloat(periodMatch[1].replace(',', '.'));
+                            annualized = value / years;
+                        } else {
+                            // lumpsum : on considère comme une seule année (non annualisable, mais on garde)
+                            annualized = value;
+                        }
+                    }
+                    const cat = m.categorie;
+                    if (!catMap.has(cat)) catMap.set(cat, 0);
+                    catMap.set(cat, catMap.get(cat) + annualized);
+                }
+                // Convertir en milliards d'euros
+                const result = {};
+                for (let [cat, val] of catMap.entries()) {
+                    result[cat] = val / 1e9;
+                }
+                return result;
+            }
+
+            const programBudget = extractProgramBudget();
+
+            // Mapper les catégories du programme vers les secteurs de la CDC
+            const categoryMapping = {
+                "sante": "Santé hospitalière",
+                "outremer": "Outre‑mer – santé",
+                "education": "Collèges",
+                "logement": "Logement social",
+                "transports": "Mobilités du quotidien",
+                "economie": "Réindustrialisation",
+                "numerique": "Numérique (infrastructures)",
+                "defense": "Sécurité intérieure",
+                "quartiers_populaires": "Politique de la ville",
+                "urbanisme": "Opérations d’aménagement (OIN)",
+                "fiscalite": "Péréquation financière"
+            };
+
+            // Construire le tableau de comparaison
+            let html = `
+                <table class="comparison-table">
+                    <thead>
+                        <tr><th>Secteur</th><th>Programme (Md€/an)</th><th>Cour des comptes (Md€/an ou total)</th><th>Notes / besoins</th></tr>
+                    </thead>
+                    <tbody>
+            `;
+
+            for (let sector of cdcBudgetData.sectors) {
+                let programAmount = null;
+                // Chercher la correspondance
+                for (let [progCat, mappedSector] of Object.entries(categoryMapping)) {
+                    if (mappedSector === sector.name) {
+                        programAmount = programBudget[progCat];
+                        break;
+                    }
+                }
+                let programDisplay = programAmount ? programAmount.toFixed(1) + ' Md€/an' : 'Non estimé';
+                let cdcDisplay = '';
+                if (sector.budget.annual) cdcDisplay = sector.budget.annual.toFixed(1) + ' Md€/an';
+                else if (sector.budget.total) cdcDisplay = sector.budget.total.toFixed(1) + ' Md€ (total)';
+                else cdcDisplay = 'Non chiffré';
+                if (sector.budget.note) cdcDisplay += `<div class="note">${sector.budget.note}</div>`;
+                
+                html += `
+                    <tr>
+                        <td><strong>${sector.name}</strong></td>
+                        <td><span class="badge-program">Programme</span><br><span class="amount">${programDisplay}</span></td>
+                        <td><span class="badge-cdc">Cour des comptes</span><br><span class="amount">${cdcDisplay}</span></td>
+                        <td class="note">${sector.needs || ''}</td>
+                    </tr>
+                `;
+            }
+            html += `</tbody></table>`;
+
+            html += `<div class="warning" style="margin-top:2rem;">
+                        📌 <strong>Limites de la comparaison</strong> : 
+                        <ul style="margin: 0.5rem 0 0 1.5rem;">
+                            <li>Les montants du programme sont annualisés automatiquement à partir des descriptions textuelles ; ils peuvent être incomplets ou mal interprétés.</li>
+                            <li>Les données de la Cour sont extraites manuellement du rapport et ne couvrent pas tous les secteurs.</li>
+                            <li>Les périmètres budgétaires ne sont pas toujours identiques (investissement / fonctionnement, État / collectivités).</li>
+                            <li>Ce tableau est une expérience de visualisation, pas une analyse budgétaire contradictoire.</li>
+                        </ul>
+                    </div>`;
+
+            document.getElementById('comparisonContent').innerHTML = html;
+        })();
+    </script>
+</body>
+</html>
